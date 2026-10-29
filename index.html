@@ -1,0 +1,1959 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Turn a Cisco account brief into a build prompt for an interactive, on-brand 3D customer experience.">
+<style>
+:root { color-scheme: dark; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<title>Cisco Solutions Generator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the cisco-3d-stage design system applied to a working tool. Midnight ground, glass panels,
+   two-clause headlines with a gradient outcome clause. Intake left, live prompt right, then gallery,
+   skill pack guidance, install module, checklist. Deliberately single (dark) theme, as the skill is. */
+:root {
+  --midnight: #050e1d; --navy: #07182d; --deep: #0d274d;
+  --blue: #00bceb; --sky: #02c8ff; --ice: #9be7ff;
+  --green: #6cc04a; --amber: #fbab18; --red: #e2231a; --pink: #f25c9a; --violet: #8e7cff; --teal: #2de2c5;
+  --ink: #e8f1fb; --muted: #9fb3c8; --faint: #6f86a0;
+  --line: rgba(155, 231, 255, 0.14); --line-2: rgba(155, 231, 255, 0.26);
+  --glass: rgba(7, 24, 45, 0.82); --glass-2: rgba(10, 30, 58, 0.55); --field: rgba(3, 12, 26, 0.7);
+  --grad: linear-gradient(90deg, #7fe3ff, #00bceb 45%, #6cc04a);
+  /* provenance labels */
+  --pub: #7fc4ff; --work: #8fdc6e; --rec: #fbc35a; --mod: #b9a8ff; --warn: #ff8a6a;
+  --font: CiscoSansTT, Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--midnight); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(1100px 520px at 78% -8%, rgba(0, 188, 235, 0.16), transparent 70%),
+                    radial-gradient(800px 420px at -6% 18%, rgba(108, 192, 74, 0.07), transparent 70%);
+  background-repeat: no-repeat;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 72px;
+}
+.wrap { max-width: 1320px; margin: 0 auto; display: grid; gap: 30px; }
+a { color: var(--ice); }
+code, .mono { font-family: var(--mono); }
+
+/* top progress bar and brand bar, the stage HUD vocabulary */
+.progress-top { height: 3px; background: rgba(155, 231, 255, 0.08); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); }
+.progress-top i { display: block; height: 100%; width: 34%; background: var(--grad); box-shadow: 0 0 12px rgba(0, 188, 235, 0.8); }
+.brandbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-block: 14px 0; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.mark { width: 34px; height: 19px; color: var(--blue); filter: drop-shadow(0 0 6px rgba(0, 188, 235, 0.6)); flex: none; }
+.brand-name { font-weight: 800; letter-spacing: -0.01em; }
+.brand-sub { color: var(--muted); font-size: 13px; }
+.jump { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.jump a { font-size: 12.5px; text-decoration: none; color: var(--ink); background: var(--glass-2); border: 1px solid var(--line); border-radius: 10px; padding: 6px 11px; }
+.jump a:hover { border-color: var(--blue); }
+
+header.top { display: grid; gap: 14px; padding-top: 18px; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 12.5px; font-weight: 600; color: var(--blue); }
+h1 { font-size: clamp(32px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; margin: 0; text-wrap: balance; max-width: 18ch; }
+.grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { margin: 0; max-width: 70ch; color: var(--ink); opacity: 0.86; font-size: clamp(15px, 1.25vw, 18px); }
+.beats { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 4px 0 0; padding: 0; }
+.beats a { font-size: 13px; padding: 7px 12px 7px 9px; border: 1px solid var(--line); border-radius: 12px; background: var(--glass-2); display: flex; gap: 8px; align-items: center; backdrop-filter: blur(10px); color: var(--ink); text-decoration: none; }
+.beats a:hover { border-color: var(--blue); }
+.beats a span { font-family: var(--mono); font-size: 11px; color: var(--blue); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tag { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 3px 8px; border-radius: 6px; white-space: nowrap; border: 1px solid currentColor; }
+.tag.pub { color: var(--pub); } .tag.work { color: var(--work); } .tag.rec { color: var(--rec); } .tag.mod { color: var(--mod); }
+
+.desk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+@media (max-width: 980px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+
+section.panel { background: var(--glass); border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: grid; gap: 18px; min-width: 0; backdrop-filter: blur(16px); }
+@media (max-width: 560px) { section.panel { padding: 18px 16px; } }
+h2 { font-size: clamp(22px, 2.2vw, 30px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 0; text-wrap: balance; }
+h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+.part { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.head { display: grid; gap: 8px; }
+.head-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.sec-lead { margin: 0; color: var(--muted); max-width: 72ch; }
+
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label, .flabel { font-weight: 600; font-size: 13px; letter-spacing: .01em; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.key { font-family: var(--mono); font-size: 10.5px; color: var(--faint); font-weight: 400; letter-spacing: .06em; }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+input[type="text"], textarea {
+  width: 100%; font: inherit; font-size: 14px; color: var(--ink); background: var(--field);
+  border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; resize: vertical;
+}
+input::placeholder, textarea::placeholder { color: var(--faint); }
+textarea { min-height: 84px; line-height: 1.5; }
+input:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible, .style-card:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .row2 { grid-template-columns: 1fr; } }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 14px; min-width: 0; }
+.group-title { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 16px; flex-wrap: wrap; }
+
+.styles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .styles { grid-template-columns: 1fr; } }
+.style-card { position: relative; display: grid; gap: 3px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--glass-2); cursor: pointer; }
+.style-card input { position: absolute; opacity: 0; pointer-events: none; }
+.style-card .letter { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .08em; }
+.style-card strong { font-weight: 700; font-size: 15px; }
+.style-card span.best { font-size: 12.5px; color: var(--muted); }
+.style-card:has(input:checked) { border-color: rgba(0, 188, 235, 0.7); box-shadow: 0 0 0 1px rgba(0, 188, 235, 0.5), 0 0 22px -6px rgba(0, 188, 235, 0.6); }
+.style-card:has(input:checked) .letter { color: var(--blue); }
+.style-detail { font-size: 13.5px; background: rgba(3, 12, 26, 0.55); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; }
+.style-detail p { margin: 0; }
+.style-detail .dnc { color: var(--warn); }
+
+.switches { display: grid; gap: 12px; }
+.switch { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: 14px; cursor: pointer; }
+.switch input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--blue); }
+.switch small { display: block; color: var(--muted); font-size: 12.5px; }
+
+/* prompt side */
+.out { position: sticky; top: 16px; }
+@media (max-width: 980px) { .out { position: static; } }
+.readiness { display: grid; gap: 6px; font-size: 13px; }
+.check-line { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; }
+.check-line .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; background: var(--green); box-shadow: 0 0 8px var(--green); }
+.check-line.flag .dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.check-line.flag { color: #ffd38a; }
+.meter { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prompt-box { background: var(--field); border: 1px solid var(--line); border-radius: 12px; max-height: 60vh; overflow: auto; }
+@media (max-width: 980px) { .prompt-box { max-height: 480px; } }
+pre#prompt { margin: 0; padding: 16px; font-family: var(--mono); font-size: 12.5px; line-height: 1.62; white-space: pre-wrap; word-break: break-word; color: #cfe0ee; }
+pre#prompt .tbd { color: #1a1205; background: var(--amber); border-radius: 3px; padding: 0 3px; }
+pre#prompt .sec { color: var(--blue); font-weight: 600; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+button { font: inherit; font-size: 13.5px; font-weight: 600; border-radius: 10px; padding: 9px 15px; cursor: pointer; border: 1px solid var(--line); background: var(--glass-2); color: var(--ink); }
+button:hover { border-color: var(--blue); }
+button.primary { background: linear-gradient(90deg, rgba(0, 188, 235, 0.35), rgba(108, 192, 74, 0.35)); border-color: rgba(0, 188, 235, 0.6); }
+button.danger { color: var(--warn); border-color: rgba(255, 138, 106, 0.5); background: transparent; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--warn); }
+.note { font-size: 12.5px; color: var(--muted); margin: 0; max-width: 76ch; }
+
+/* mock-ups */
+.mock { display: block; width: 100%; max-width: 100%; }
+.mock svg { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.9), 0 0 30px -18px rgba(0, 188, 235, 0.5); }
+.mock svg text { font-family: var(--font); }
+.mock svg .mono { font-family: var(--mono); }
+.callouts { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 13px; }
+.callouts li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.callouts .n { width: 19px; height: 19px; border-radius: 50%; background: var(--ice); color: var(--midnight); font-family: var(--mono); font-size: 11px; font-weight: 600; display: inline-grid; place-items: center; margin-top: 1px; box-shadow: 0 0 10px rgba(155, 231, 255, 0.6); }
+body[data-mode="moon"] .structured-only { display: none !important; }
+body:not([data-mode="moon"]) .moon-only { display: none !important; }
+.moon-block { display: grid; gap: 14px; padding: 16px; border: 1px solid rgba(0, 188, 235, 0.45); border-radius: 14px; background: linear-gradient(135deg, rgba(0, 188, 235, 0.08), rgba(108, 192, 74, 0.05)); }
+.field label.switch { display: grid; grid-template-columns: auto 1fr; font-weight: 400; letter-spacing: 0; font-size: 14px; }
+.field label.switch > span { font-weight: 600; }
+.field label.switch small { font-weight: 400; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+@media (max-width: 560px) { .opts { grid-template-columns: 1fr; } }
+.frow { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.mic { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(0, 188, 235, 0.5); background: rgba(0, 188, 235, 0.10); color: var(--ice); cursor: pointer; }
+.mic svg { width: 12px; height: 12px; }
+.mic.on { border-color: var(--red); background: rgba(226, 35, 26, 0.18); color: #ffb3ad; animation: micpulse 1.2s ease-in-out infinite; }
+@keyframes micpulse { 50% { box-shadow: 0 0 0 5px rgba(226, 35, 26, 0.18); } }
+.dict-hint { font-size: 12.5px; color: var(--ink); background: rgba(0, 188, 235, 0.10); border: 1px solid rgba(0, 188, 235, 0.4); border-radius: 10px; padding: 8px 10px; }
+.dict-hint kbd, .talk kbd { font-family: var(--mono); font-size: 11.5px; border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 5px; background: var(--field); }
+.talk-open { display: inline-flex; align-items: center; gap: 8px; }
+.talk { position: fixed; inset: 0; z-index: 60; background: rgba(2, 6, 14, 0.82); backdrop-filter: blur(8px); display: grid; place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.talk[hidden], .dict-hint[hidden], .bigmic[hidden] { display: none; }
+.talk-card { width: min(720px, 100%); max-height: 100%; overflow: auto; background: var(--glass); border: 1px solid rgba(0, 188, 235, 0.45); border-radius: 18px; padding: 24px; display: grid; gap: 16px; box-shadow: 0 0 60px -20px rgba(0, 188, 235, 0.6); }
+.talk-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.talk-bar { height: 3px; background: rgba(155, 231, 255, 0.1); border-radius: 2px; }
+.talk-bar i { display: block; height: 100%; background: var(--grad); border-radius: 2px; transition: width .3s; }
+.talk h3 { font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; }
+.talk textarea { min-height: 140px; font-size: 16px; }
+.talk .choices { display: flex; gap: 10px; flex-wrap: wrap; }
+.talk .choices button[aria-pressed="true"] { background: linear-gradient(90deg, rgba(0, 188, 235, 0.35), rgba(108, 192, 74, 0.35)); border-color: rgba(0, 188, 235, 0.7); }
+.bigmic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; padding: 0; border: 1px solid rgba(0, 188, 235, 0.6); background: rgba(0, 188, 235, 0.15); }
+.bigmic svg { width: 26px; height: 26px; color: var(--ice); }
+.bigmic.on { border-color: var(--red); background: rgba(226, 35, 26, 0.25); animation: micpulse 1.2s ease-in-out infinite; }
+.talk-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.talk-row .sp { flex: 1; }
+.talk-status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+.talk .toggles { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.talk .toggles label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .mic.on, .bigmic.on { animation: none; } }
+#examples-field[hidden] { display: none; }
+.principles { border: 1px solid rgba(108, 192, 74, 0.45); border-radius: 14px; padding: 16px; background: linear-gradient(135deg, rgba(108, 192, 74, 0.08), rgba(0, 188, 235, 0.05)); }
+.moon-note { font-size: 13px; color: var(--muted); border-left: 2px solid var(--green); padding-left: 10px; }
+.moon-note b { color: var(--ink); }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; }
+select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.style-card.moon { background: linear-gradient(135deg, rgba(0, 188, 235, 0.16), rgba(108, 192, 74, 0.10)); }
+.preset.featured { grid-column: 1 / -1; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 900px) { .preset.featured { grid-template-columns: minmax(0, 1fr); } }
+.gal-body { display: grid; gap: 16px; }
+.gal-body[hidden] { display: none; }
+#gal-toggle { flex: none; }
+.styles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 700px) { .styles { grid-template-columns: 1fr 1fr; } }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+@media (max-width: 900px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
+.preset { margin: 0; display: grid; gap: 14px; align-content: start; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(3, 12, 26, 0.5); min-width: 0; }
+.preset.is-selected { border-color: rgba(0, 188, 235, 0.7); box-shadow: 0 0 0 1px rgba(0, 188, 235, 0.45), 0 0 30px -12px rgba(0, 188, 235, 0.7); }
+.preset figcaption { display: grid; gap: 10px; }
+.preset .ttl { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.preset .ttl strong { font-weight: 800; font-size: 18px; letter-spacing: -0.015em; }
+.preset .best { margin: 0; color: var(--muted); font-size: 13px; }
+.preset .skilluse { margin: 0; font-size: 13px; border-left: 2px solid var(--blue); padding-left: 10px; }
+.preset .ref { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 12.5px; }
+.preset .ref a { font-family: var(--mono); font-size: 12px; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); display: inline-block; }
+.preset button[aria-pressed="true"] { background: linear-gradient(90deg, rgba(0, 188, 235, 0.35), rgba(108, 192, 74, 0.35)); border-color: rgba(0, 188, 235, 0.6); }
+
+/* design system */
+.ds { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.ds > * { min-width: 0; }
+.ds .c6 { grid-column: span 6; } .ds .c4 { grid-column: span 4; } .ds .c8 { grid-column: span 8; } .ds .c12 { grid-column: span 12; }
+@media (max-width: 900px) { .ds .c6, .ds .c4, .ds .c8 { grid-column: span 12; } }
+.card { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: rgba(3, 12, 26, 0.5); display: grid; gap: 12px; align-content: start; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.sw { display: grid; gap: 6px; font-size: 12px; }
+.sw i { display: block; height: 44px; border-radius: 10px; border: 1px solid var(--line); }
+.sw b { font-weight: 600; }
+.sw code { font-size: 11px; color: var(--muted); }
+.blocks { display: flex; gap: 6px; flex-wrap: wrap; }
+.blocks i { width: 26px; height: 26px; border-radius: 7px; display: block; }
+.specimen { display: grid; gap: 6px; }
+.specimen .h { font-size: clamp(24px, 2.6vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.04; }
+.layouts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 700px) { .layouts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.layout { display: grid; gap: 6px; font-size: 12.5px; }
+.layout svg { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); }
+.layout b { font-family: var(--mono); font-size: 12px; color: var(--ice); }
+.layout span { color: var(--muted); }
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 560px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 400; background: rgba(3, 12, 26, 0.6); }
+tr:last-child td { border-bottom: 0; }
+td code { font-size: 12px; color: var(--ice); }
+.rules { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; }
+.rules li::marker { color: var(--blue); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 13.5px; }
+.checks li { display: grid; grid-template-columns: 16px 1fr; gap: 9px; }
+.checks li::before { content: ""; width: 10px; height: 10px; margin-top: 6px; border-radius: 3px; border: 1.5px solid var(--blue); }
+
+/* install */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button[aria-selected="true"] { background: linear-gradient(90deg, rgba(0, 188, 235, 0.35), rgba(108, 192, 74, 0.35)); border-color: rgba(0, 188, 235, 0.6); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: st; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+.steps > li::before { content: counter(st, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: var(--blue); border: 1px solid rgba(0, 188, 235, 0.5); border-radius: 9px; height: 28px; display: grid; place-items: center; }
+.steps .body { display: grid; gap: 8px; min-width: 0; }
+.steps p { margin: 0; color: var(--ink); opacity: .9; font-size: 14px; }
+.code { position: relative; background: #020913; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.code pre { margin: 0; padding: 12px 14px; padding-right: 72px; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; overflow-x: auto; color: #cfe0ee; }
+.code button { position: absolute; top: 7px; right: 7px; font-size: 11.5px; padding: 4px 9px; }
+.dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; border: 1px solid rgba(0, 188, 235, 0.45); border-radius: 14px; padding: 16px; background: linear-gradient(90deg, rgba(0, 188, 235, 0.12), rgba(108, 192, 74, 0.08)); }
+@media (max-width: 640px) { .dl { grid-template-columns: 1fr; } }
+.dl p { margin: 0; font-size: 13px; color: var(--muted); }
+.warnbox { border: 1px solid rgba(251, 171, 24, 0.5); background: rgba(251, 171, 24, 0.08); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; }
+.warnbox b { color: var(--amber); }
+.tree { font-family: var(--mono); font-size: 12px; line-height: 1.7; color: #cfe0ee; margin: 0; padding: 12px 14px; background: #020913; border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+.tree span { color: var(--muted); }
+
+/* checklist */
+.lower { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+@media (max-width: 980px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.checklist label { display: grid; grid-template-columns: auto 1fr; gap: 10px; padding: 8px 6px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.checklist label:hover { background: rgba(155, 231, 255, 0.05); }
+.checklist input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--green); }
+.checklist input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--faint); }
+.progress { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; max-width: 86ch; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="progress-top" aria-hidden="true"><i></i></div>
+<div class="wrap">
+  <div class="brandbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 36 20" aria-hidden="true"><g fill="currentColor"><rect x="1" y="14" width="2" height="5" rx="1"/><rect x="5" y="9" width="2" height="10" rx="1"/><rect x="9" y="3" width="2" height="16" rx="1"/><rect x="13" y="9" width="2" height="10" rx="1"/><rect x="17" y="14" width="2" height="5" rx="1"/><rect x="21" y="9" width="2" height="10" rx="1"/><rect x="25" y="3" width="2" height="16" rx="1"/><rect x="29" y="9" width="2" height="10" rx="1"/><rect x="33" y="14" width="2" height="5" rx="1"/></g></svg>
+      <span class="brand-name">Solutions Generator</span>
+      <span class="brand-sub">for Cisco account teams</span>
+    </div>
+    <nav class="jump" aria-label="Sections">
+      <a href="#presets">Presets</a>
+      <a href="#brief-panel">Brief</a>
+      <a href="#prompt-panel">Prompt</a>
+      <a href="#skill">Skill pack</a>
+      <a href="#models">Models</a>
+      <a href="#install">Install</a>
+      <a href="#checklist-panel">Checklist</a>
+    </nav>
+  </div>
+
+  <header class="top">
+    <div class="eyebrow">Account brief to experience</div>
+    <h1>Every account brief, one prompt. <span class="grad">Every build on brand.</span></h1>
+    <p class="lede">Pick a preset, give the basics, and copy a short build prompt. The preset sets the format; the model researches the customer and fills it. Only the fields you fill go into the prompt.</p>
+    <ol class="beats" aria-label="Workflow, in page order">
+      <li><a href="#presets"><span>01</span>Choose your preset</a></li>
+      <li><a href="#brief-panel"><span>02</span>Fill the intake</a></li>
+      <li><a href="#prompt-panel"><span>03</span>Copy the prompt</a></li>
+      <li><a href="#install"><span>04</span>Install the skill and paste the prompt</a></li>
+      <li><a href="#checklist-panel"><span>05</span>Run the checklist</a></li>
+      <li><a href="#iter-panel"><span>06</span>Edit one thing at a time</a></li>
+    </ol>
+  </header>
+
+  <section class="panel" aria-labelledby="gal-h" id="presets">
+    <div class="head">
+      <div class="eyebrow">01 · Choose your preset</div>
+      <div class="head-row">
+        <h2 id="gal-h">Six formats. <span class="grad">Pick the one your room needs.</span></h2>
+        <button type="button" id="gal-toggle" aria-expanded="true" aria-controls="gal-body">Hide previews</button>
+      </div>
+      <p class="sec-lead">Know the format already? Pick it here and go straight to the intake. New to these? Open the previews to compare what each one builds.</p>
+    </div>
+    <div class="styles" role="radiogroup" aria-label="Preset" id="preset-picker">
+      <label class="style-card moon"><input type="radio" name="style" value="A" id="s-a" checked><span class="letter">STYLE A · OPEN BRIEF</span><strong>Moonshot</strong><span class="best">Three inputs, one shot, the model's best idea</span></label>
+      <label class="style-card"><input type="radio" name="style" value="B" id="s-b"><span class="letter">STYLE B</span><strong>3D scenario walkthrough</strong><span class="best">Executives who need to feel one site and compare outcomes</span></label>
+      <label class="style-card"><input type="radio" name="style" value="C" id="s-c"><span class="letter">STYLE C</span><strong>Narrated 3D stage talk</strong><span class="best">Presenting your own method over a live talk, plus a film</span></label>
+      <label class="style-card"><input type="radio" name="style" value="D" id="s-d"><span class="letter">STYLE D</span><strong>Sourced executive briefing</strong><span class="best">IT leadership needing evidence and a sequenced next step</span></label>
+      <label class="style-card"><input type="radio" name="style" value="E" id="s-e"><span class="letter">STYLE E</span><strong>4D AgenticOps experience</strong><span class="best">Weak signals caught early, with a playable decision</span></label>
+      <label class="style-card"><input type="radio" name="style" value="F" id="s-f"><span class="letter">STYLE F</span><strong>Live operations twin</strong><span class="best">A living site, run like an operations console</span></label>
+    </div>
+    <div id="gal-body" class="gal-body">
+      <p class="sec-lead">Style A, Moonshot, is the open one-shot brief the other builds started from. Styles B to F are each reverse engineered from one of Stephen Ewings' published builds and redrawn with the cisco-3d-stage palette, type, and HUD. Open the live build to see the original. Customer names and figures shown come from those builds; replace them in new work.</p>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+
+  <div class="desk">
+    <section class="panel" aria-labelledby="intake-h" id="brief-panel">
+      <div class="head">
+        <div class="eyebrow">02 · Intake</div>
+        <div class="head-row"><h2 id="intake-h">Intake block</h2><button type="button" class="primary talk-open" id="talk-open"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>Talk it through <span class="key">ADVANCED</span></button></div>
+        <p class="sec-lead">Talk it out instead of typing: every field has a Speak button, or use Talk it through to answer one question at a time.</p>
+      </div>
+
+      <form id="brief" autocomplete="off">
+        <fieldset>
+          <div class="field">
+            <label for="f-account"><span class="structured-only">Account</span><span class="moon-only">Who the customer is</span> <span class="key">ACCOUNT</span></label>
+            <input type="text" id="f-account" name="account" placeholder="Customer name and what they do, in one sentence">
+          </div>
+          <div class="field">
+            <label for="f-audience"><span class="structured-only">Audience</span><span class="moon-only">Who will be in the room</span> <span class="key">AUDIENCE</span></label>
+            <input type="text" id="f-audience" name="audience" placeholder="Role, seniority, and the decision they own">
+          </div>
+          <div class="field">
+            <span class="flabel">Who it's for <span class="key">PURPOSE</span></span>
+            <label class="switch"><input type="radio" name="purpose" value="customer" id="pu-customer" checked><span>The customer<small>Customer-facing. Speaks to their priorities and outcomes, with the research kept in the background. Narrated end to end so you can send the link or a video, with speaker notes so you can present it live.</small></span></label>
+            <label class="switch"><input type="radio" name="purpose" value="internal" id="pu-internal"><span>Our account team<small>Internal explainer. Explains a specific tool or solution in this customer's context, with the background, sources and talk tracks the team needs.</small></span></label>
+          </div>
+          <div class="field structured-only">
+            <label for="f-where">Where they are <span class="key">WHERE THEY ARE</span></label>
+            <textarea id="f-where" name="where" placeholder="Anything you already know about their current state. Leave empty and the model researches it."></textarea>
+          </div>
+          <div class="field">
+            <label for="f-discuss"><span class="structured-only">What to discuss</span><span class="moon-only">What you want the focus to be</span> <span class="key">FOCUS</span></label>
+            <textarea id="f-discuss" name="discuss" placeholder="The one Cisco solution or use case, and the business problem it solves"></textarea>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label for="f-hours">Build time budget <span class="key">GUARDRAIL</span></label>
+              <select id="f-hours" name="hours"><option value="0.5">30 minutes</option><option value="1">1 hour</option><option value="2" selected>2 hours</option><option value="4">4 hours</option><option value="8">8 hours</option></select>
+              <p class="hint">How long the model may work. A ceiling, not a target: room to go deep, and a deadline so it doesn't drift.</p>
+            </div>
+            <div class="field">
+              <label for="f-length">Experience length <span class="key">RUNTIME</span></label>
+              <select id="f-length" name="length"><option value="model">Let the model decide</option><option value="5">About 5 minutes</option><option value="10" selected>About 10 minutes</option><option value="15">About 15 minutes</option><option value="20">About 20 minutes</option><option value="30">About 30 minutes</option><option value="45">About 45 minutes</option></select>
+              <p class="hint">How long the full narrated run lasts, start to finish. Viewers can still explore on their own.</p>
+            </div>
+          </div>
+
+          <div class="field principles">
+            <span class="flabel">Core principles <span class="key">ON BY DEFAULT</span></span>
+            <p class="hint">With all four on, the AI builds straight through. Untick any of them for guided mode: the model confirms the skill is installed (and asks you to install it if not), may ask you questions, and waits for you to approve a storyboard and narration script before it builds.</p>
+            <label class="switch"><input type="checkbox" id="o-oneshot" checked><span>One-shot prompt: no questions<small>The model makes reasonable assumptions, notes them, and keeps going.</small></span></label>
+            <label class="switch"><input type="checkbox" id="o-straight" checked><span>Build straight through: no plan to approve<small>It plans internally and builds. Make it real first, then make it perfect.</small></span></label>
+            <label class="switch"><input type="checkbox" id="o-timebox" checked><span>Apply the build time budget<small>The budget above is a ceiling, not a target: go deep, don't rush, don't drift.</small></span></label>
+            <label class="switch"><input type="checkbox" id="o-masterpiece" checked><span>Create a masterpiece<small>A broad mandate: the model decides what a masterpiece is. If you have examples of one, add them below.</small></span></label>
+          </div>
+
+          <div class="field" id="examples-field">
+            <label for="f-examples">Examples of a masterpiece <span class="key">OPTIONAL</span></label>
+            <textarea id="f-examples" name="examples" placeholder="Links or short descriptions of work you consider a masterpiece, one per line. Leave empty to let the model decide."></textarea>
+          </div>
+
+          <div class="moon-only moon-block">
+            <div class="field">
+              <label for="f-context">Context only you can give <span class="key">OPTIONAL · NOT PUBLIC</span></label>
+              <textarea id="f-context" name="context" placeholder="Our work together, internal priorities, what you heard in meetings: anything that is not publicly documented. Leave empty to use public sources only."></textarea>
+              <p class="hint">The model researches everything public. Add only what it cannot find. Leave it empty if there is nothing.</p>
+            </div>
+            <div class="field">
+              <span class="flabel">Personas <span class="key">PERSONAS</span></span>
+              <label class="switch"><input type="radio" name="pmode" value="wide" id="pm-wide" checked><span>A wide range, chosen for this audience<small>The model picks leaders, their teams, and the frontline roles their decisions affect, and writes use cases for each.</small></span></label>
+              <label class="switch"><input type="radio" name="pmode" value="specific" id="pm-specific"><span>Specific personas<small>List the roles you want covered. The model still writes their use cases.</small></span></label>
+              <textarea id="f-mpersonas" name="mpersonas" placeholder="One per line: a role, or a named executive with a public source" hidden></textarea>
+            </div>
+          </div>
+
+          <div class="group-title structured-only"><h3>Evidence and cast</h3><span class="part">one per line</span></div>
+
+          <div class="field structured-only">
+            <label for="f-items">Key items <span class="key">OPTIONAL</span></label>
+            <textarea id="f-items" name="items" placeholder="Anything that must appear: a fact, product, or program, with a link if you have one"></textarea>
+          </div>
+          <div class="field structured-only">
+            <label for="f-personas">Personas <span class="key">OPTIONAL</span></label>
+            <textarea id="f-personas" name="personas" placeholder="One per line: a role or a named person, and what they care about"></textarea>
+          </div>
+          <div class="field structured-only">
+            <label for="f-places">Places <span class="key">PLACES</span></label>
+            <textarea id="f-places" name="places" placeholder="Sites or regions that should anchor the story"></textarea>
+          </div>
+          <div class="field structured-only">
+            <label for="f-scenarios">Scenarios <span class="key">OPTIONAL</span></label>
+            <textarea id="f-scenarios" name="scenarios" placeholder="Situations you want covered, one per line"></textarea>
+          </div>
+          <div class="field structured-only">
+            <label for="f-assumptions">Assumptions <span class="key">ASSUMPTIONS</span></label>
+            <textarea id="f-assumptions" name="assumptions" placeholder="Anything you already know the build should assume"></textarea>
+          </div>
+
+          <div class="structured-only">
+            <div class="field structured-only">
+              <label for="f-output">Output <span class="key">OUTPUT</span></label>
+              <input type="text" id="f-output" name="output" placeholder="Interactive web experience, shared as a link">
+            </div>
+          </div>
+
+          <div class="group-title"><h3>Preset</h3><a href="#presets" class="part">Change in step 01</a></div>
+          <div class="style-detail" id="style-detail" aria-live="polite"></div>
+          <div class="field structured-only">
+            <span class="flabel">Optional components <span class="key">ADD TO THIS PRESET</span></span>
+            <p class="hint">Only the components you tick go into the prompt. Style F starts with all of them; the others start with none.</p>
+            <div class="opts" id="opts"></div>
+          </div>
+
+          <div class="group-title"><h3>Gates and extras</h3><span class="part">Parts 3, 5, 7</span></div>
+          <div class="switches">
+            <label class="switch"><input type="checkbox" id="o-orch" checked><span>Run it as a multi-agent build<small>Recommended. Tells the model to orchestrate sub-agents for research, design, build and review, with a separate reviewer judging the running build. See Model recommendations.</small></span></label>
+            <label class="switch"><input type="checkbox" id="o-skill" checked><span>Build with the cisco-3d-stage skill pack<small>Tells the model to use the skill, and which parts of it suit the preset you picked. Install the skill first (step 04).</small></span></label>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+
+    <section class="panel out" aria-labelledby="out-h" id="prompt-panel">
+      <div class="head">
+        <div class="eyebrow">03 · Prompt</div>
+        <div class="head-row"><h2 id="out-h">Build prompt</h2><span class="part">master + intake + preset + skill</span></div>
+      </div>
+      <div class="readiness" id="readiness" aria-live="polite"></div>
+      <div class="meter" id="meter"></div>
+      <div class="prompt-box"><pre id="prompt" tabindex="0" aria-label="Assembled prompt"></pre></div>
+      <div class="actions">
+        <button type="button" class="primary" id="copy">Copy prompt</button>
+        <button type="button" class="danger" id="clear">Clear brief</button>
+      </div>
+      <div class="confirm" id="confirm" hidden>
+        <span>Clear every field in this brief?</span>
+        <button type="button" class="danger" id="confirm-yes">Clear</button>
+        <button type="button" id="confirm-no">Keep it</button>
+      </div>
+      <div class="status" id="status" role="status"></div>
+      <p class="note"><b>Run it with Claude Opus 5.5</b> (or your provider's equivalent) in a multi-agent orchestrator such as Claude Code. <a href="#models">Model recommendations</a></p>
+      <p class="note"><b>Make sure your AI tool isn't in plan mode.</b> Plan mode, such as Claude Code's, always stops for your approval whatever the prompt says. Start it in its normal or auto mode.</p>
+      <p class="note">Your brief is saved in this browser only, for you. Nothing you type here is sent anywhere. Do not paste customer internal data, keys, or passwords.</p>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="skill-h" id="skill">
+    <div class="head">
+      <div class="eyebrow">Reference · Skill pack and design guidance</div>
+      <h2 id="skill-h">One look and one engine. <span class="grad">Every story comes from the brief.</span></h2>
+      <p class="sec-lead">The cisco-3d-stage skill is a look and an engine, not a talk. It turns a story into a Three.js web app that moves like a deck, where every scene is its own lit 3D world. The generator's prompt points the build at it, so every preset comes out on brand and passes the same review.</p>
+    </div>
+
+    <div class="ds">
+      <div class="card c8">
+        <h3>Palette</h3>
+        <div class="swatches">
+          <div class="sw"><i style="background:#050e1d"></i><b>Midnight</b><code>#050e1d · page, fog</code></div>
+          <div class="sw"><i style="background:#07182d"></i><b>Navy</b><code>#07182d · panels</code></div>
+          <div class="sw"><i style="background:#0d274d"></i><b>Deep</b><code>#0d274d · blazer, depth</code></div>
+          <div class="sw"><i style="background:#00bceb"></i><b>Blue</b><code>#00bceb · accent, mark</code></div>
+          <div class="sw"><i style="background:#02c8ff"></i><b>Sky</b><code>#02c8ff · secondary</code></div>
+          <div class="sw"><i style="background:#9be7ff"></i><b>Ice</b><code>#9be7ff · caption words</code></div>
+          <div class="sw"><i style="background:#6cc04a"></i><b>Green</b><code>#6cc04a · outcome, live</code></div>
+          <div class="sw"><i style="background:#fbab18"></i><b>Amber</b><code>#fbab18 · warning</code></div>
+          <div class="sw"><i style="background:#e2231a"></i><b>Red</b><code>#e2231a · problem</code></div>
+          <div class="sw"><i style="background:linear-gradient(90deg,#7fe3ff,#00bceb 45%,#6cc04a)"></i><b>Grad</b><code>outcome clause, progress</code></div>
+          <div class="sw"><i style="background:rgba(10,30,58,0.55);backdrop-filter:blur(8px)"></i><b>Glass</b><code>rgba(10,30,58,.55) + blur</code></div>
+        </div>
+        <div class="flabel">Block colors for structure diagrams</div>
+        <div class="blocks" aria-label="Block colors">
+          <i style="background:#00BCEB"></i><i style="background:#6CC04A"></i><i style="background:#FBAB18"></i><i style="background:#F25C9A"></i><i style="background:#8E7CFF"></i><i style="background:#FF6B4A"></i><i style="background:#2DE2C5"></i><i style="background:#FFD95A"></i>
+        </div>
+      </div>
+      <div class="card c4">
+        <h3>Type</h3>
+        <div class="specimen">
+          <div class="eyebrow">03 · The method</div>
+          <div class="h">Prompting has the same shape. <span class="grad">Start at the solid base.</span></div>
+          <p class="hint">Inter 300 to 800 with CiscoSansTT first in the stack. Headline 800, tracking -0.03em, line height 1.02. Eyebrow 12.5px, uppercase, 0.16em, blue. JetBrains Mono for code, timers and URLs.</p>
+        </div>
+      </div>
+
+      <div class="card c12">
+        <h3>HUD layouts</h3>
+        <div class="layouts" id="layouts"></div>
+      </div>
+
+      <div class="card c6">
+        <h3>Fixed every time, dynamic per request</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Fixed</th><th>Dynamic</th></tr></thead>
+          <tbody>
+            <tr><td>Deck navigation, deep links <code>#scene/step</code></td><td>Number of scenes, steps, order</td></tr>
+            <tr><td>Each scene a 3D world, reached by a camera flight</td><td>What each world contains</td></tr>
+            <tr><td>Sky shader changes every scene</td><td>Sky colors and pattern mix</td></tr>
+            <tr><td>One 7,000 point particle field that morphs</td><td>Which formation means what</td></tr>
+            <tr><td>Glass HUD: eyebrow, two-clause headline, lead, beats</td><td>All copy</td></tr>
+            <tr><td>Labels on the OVERLAY layer, after bloom</td><td>Labels, screens, media</td></tr>
+            <tr><td>Camera box, presenter and talking-points windows</td><td>Presenter name, talk track</td></tr>
+            <tr><td>Headless review at 1440, 1280, 390</td><td>Workshop, live links, sources</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card c6">
+        <h3>Scene recipes</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Pattern</th><th>Layout</th><th>What each click does</th></tr></thead>
+          <tbody>
+            <tr><td>Hero mark</td><td>hero</td><td>Bridge bars rise from a reflective grid</td></tr>
+            <tr><td>Old medium breaks</td><td>stack</td><td>Flat frames tilt, then fold into a sphere</td></tr>
+            <tr><td>Pyramid flip</td><td>stack</td><td>Inverted pyramid flips onto a solid base</td></tr>
+            <tr><td>Anatomy focus</td><td>focus</td><td>Each click pulls one colored tile forward</td></tr>
+            <tr><td>World and screen</td><td>stack</td><td>Diorama beside a glass browser screen</td></tr>
+            <tr><td>Workshop builder</td><td>workshop</td><td>Form fills 3D base slabs, then a timer</td></tr>
+            <tr><td>Lineage galaxy · Loop · Guardrails</td><td>stack</td><td>Nodes on a spiral, a ring, hex shields</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="card c4">
+        <h3>Copy rules</h3>
+        <ul class="rules">
+          <li>No em dashes anywhere. Use commas, colons, or separate sentences.</li>
+          <li>Headline: a statement, then the outcome in the gradient clause.</li>
+          <li>Eyebrows carry a number and a chapter: <code>03 · The method</code>.</li>
+          <li>Notes are written for the ear. Mark new clicks with "Click."</li>
+          <li>The narrator is always disclosed as AI and never impersonates the presenter.</li>
+        </ul>
+      </div>
+      <div class="card c4">
+        <h3>Quality bar</h3>
+        <ul class="checks">
+          <li>Every world means something for its scene, and every click changes it.</li>
+          <li>Adjacent scenes never share a sky palette or a particle formation.</li>
+          <li>Text never sits on bright geometry; labels stay crisp after bloom.</li>
+          <li>Keys, clicks and deep links work; typing never navigates.</li>
+          <li>At 390px the HUD sits at the bottom with no overflow.</li>
+          <li>No console errors. Facts accurate or labelled modeled.</li>
+        </ul>
+      </div>
+      <div class="card c4">
+        <h3>Security</h3>
+        <ul class="rules">
+          <li>No API keys, tokens or passwords in source, media or published files.</li>
+          <li>Live links accept <code>https://</code> only; link edits stay in the browser.</li>
+          <li>Narration is pre-rendered, so the published site calls no API at runtime.</li>
+        </ul>
+      </div>
+
+      <div class="card c12">
+        <h3>Dependencies</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Component</th><th>Version</th><th>Needed for</th><th>How you get it</th><th>License</th></tr></thead>
+          <tbody>
+            <tr><td>three.js core, postprocessing and shader addons</td><td>r170</td><td>The 3D stage</td><td>Vendored in <code>starter/vendor/three</code></td><td>MIT</td></tr>
+            <tr><td>Inter, JetBrains Mono</td><td>4.x, 2.x</td><td>Type</td><td>Vendored in <code>starter/vendor/fonts</code></td><td>SIL OFL 1.1</td></tr>
+            <tr><td>Python 3</td><td>3.9 or later</td><td>Local static server, audio rendering</td><td>Preinstalled on macOS and most Linux</td><td>PSF</td></tr>
+            <tr><td>Node.js</td><td>18 or later</td><td>Narration export, docs, headless review</td><td>nodejs.org</td><td>MIT</td></tr>
+            <tr><td>edge-tts</td><td>latest</td><td>Pre-rendering the neural narration voices</td><td><code>pip install edge-tts</code></td><td>LGPL / GPL 3.0</td></tr>
+            <tr><td>rangehttpserver</td><td>latest</td><td>Local server with range requests, so the film scrubber can seek</td><td><code>pip install rangehttpserver</code></td><td>Apache 2.0</td></tr>
+            <tr><td>puppeteer-core</td><td>23.x</td><td>Headless review screenshots and behavior tests</td><td><code>npm i -D puppeteer-core</code></td><td>Apache 2.0</td></tr>
+            <tr><td>Chrome or Chromium</td><td>any recent</td><td>Runs the headless review</td><td>Local install</td><td>BSD</td></tr>
+            <tr><td>cisco-branded skill</td><td></td><td>Base design system (palette, type, glass, scroll explainers). Optional; cisco-3d-stage already carries its tokens.</td><td>Not in this pack. See the note in Install.</td><td></td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">The narration voices are Microsoft Azure neural voices accessed through edge-tts. Check that your use of the generated audio fits Cisco policy before publishing a narrated edition.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="mod-h" id="models">
+    <div class="head">
+      <div class="eyebrow">Reference · Models and orchestration</div>
+      <h2 id="mod-h">Always a multi-agent build. <span class="grad">Always the most capable model.</span></h2>
+      <p class="sec-lead">These prompts ask for research, design, a 3D build and a critical review inside one time budget. That work goes best when one agent orchestrates and sub-agents work in parallel, on Claude Opus 5.5 or the equivalent model from your provider.</p>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Provider</th><th>Orchestrator (run the prompt here)</th><th>Sub-agents</th><th>Where to run it</th></tr></thead>
+      <tbody>
+        <tr><td><b>Anthropic</b> (recommended)</td><td><b>Claude Opus 5.5</b> <code>claude-opus-5-5</code>, effort set to high or xhigh. Its default effort is medium, so raise it. For the hardest builds, Claude Fable 5.1 <code>claude-fable-5-1</code>.</td><td>Claude Sonnet 5.5 for judgment-heavy work such as review; Claude Haiku 5.5 for reading-heavy research.</td><td>Claude Code with sub-agents and workflows; the Claude Agent SDK; or Claude Managed Agents, whose outcomes feature has a separate grader iterate against your rubric.</td></tr>
+        <tr><td><b>OpenAI</b></td><td>The most capable GPT model available. At the time of writing, GPT-5.5.</td><td>A smaller, faster model from the same family.</td><td>Codex.</td></tr>
+        <tr><td><b>Google</b></td><td>The most capable Gemini model available. At the time of writing, the Gemini 3.5 family.</td><td>Gemini Flash.</td><td>Antigravity.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ds">
+      <div class="card c6">
+        <h3>Making the time budget real</h3>
+        <ul class="rules">
+          <li>The prompt sets the budget as a ceiling, not a target: go deep, don't rush, finish early only when the work clears the bar, and check the clock while working.</li>
+          <li>A prompt can only ask. To enforce the limit, set it in the harness as well: a session budget in Claude Managed Agents (a hard spending cap), or a task budget on the Claude API (a token ceiling the model can see and pace itself against).</li>
+          <li>In Claude Code, watch the session and stop it at the deadline if it runs long.</li>
+        </ul>
+      </div>
+      <div class="card c6">
+        <h3>Why multi-agent</h3>
+        <ul class="rules">
+          <li>Research, design, build and review run in parallel, so more of the budget goes into depth.</li>
+          <li>A separate reviewer judges the running build. Models tend to rate their own work too kindly, and an outside reviewer corrects for that.</li>
+          <li>The orchestrator keeps the brief and the bar in view while the sub-agents fill their own context with reading and code.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Model lineups change often. Confirm the current top model on each provider's documentation before a big build.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="inst-h" id="install">
+    <div class="head">
+      <div class="eyebrow">04 · Install</div>
+      <h2 id="inst-h">Download once. <span class="grad">Build the next verse in an afternoon.</span></h2>
+      <p class="sec-lead">Install the skill into the agent you build with, run the starter to confirm it works, then paste a prompt from this page with "Build with the cisco-3d-stage skill pack" switched on.</p>
+    </div>
+
+    <div class="dl">
+      <div>
+        <h3>Get the SEVerse-Skill pack</h3>
+        <p>The cisco-3d-stage skill lives in the SEVerse-Skill repository: SKILL.md, six reference guides, and a runnable 7 scene starter with its tools, vendored three.js r170 and fonts. On GitHub, choose Code, then Download ZIP, which saves <code>SEVerse-Skill-main.zip</code>. If you do not have access, ask Stephen Ewings.</p>
+        <p>The pack's examples folder holds screenshots of internal customer talks. Keep it inside Cisco and leave it out of anything you share externally.</p>
+      </div>
+    </div>
+
+    <div class="warnbox"><b>Not in this pack:</b> the base <code>cisco-branded</code> skill (palette, type, glass panels and scroll explainers) is referenced by cisco-3d-stage but is not included in this zip. Everything this generator needs is covered by cisco-3d-stage on its own. If you have <code>cisco-branded</code>, install it beside it the same way and the agent reads both.</div>
+
+    <div class="tabs" role="tablist" aria-label="Your agent">
+      <button type="button" role="tab" id="tab-code" aria-selected="true" aria-controls="pane-code">Claude Code</button>
+      <button type="button" role="tab" id="tab-app" aria-selected="false" aria-controls="pane-app">Claude app</button>
+      <button type="button" role="tab" id="tab-cursor" aria-selected="false" aria-controls="pane-cursor">Cursor</button>
+    </div>
+
+    <div role="tabpanel" id="pane-code" aria-labelledby="tab-code">
+      <ol class="steps">
+        <li><div class="body"><h3>Unzip the pack</h3><p>From the folder where you saved the download.</p>
+          <div class="code"><pre>unzip SEVerse-Skill-main.zip</pre></div></div></li>
+        <li><div class="body"><h3>Copy the skill into your skills folder</h3><p>Personal install, available in every project:</p>
+          <div class="code"><pre>mkdir -p ~/.claude/skills && cp -R SEVerse-Skill-main/cisco-3d-stage ~/.claude/skills/</pre></div>
+          <p>Or a project install, shared with everyone who clones the repo:</p>
+          <div class="code"><pre>mkdir -p .claude/skills && cp -R SEVerse-Skill-main/cisco-3d-stage .claude/skills/</pre></div></div></li>
+        <li><div class="body"><h3>Confirm Claude sees it</h3><p>Start a new Claude Code session in your build folder and ask which skills it has. It should list <code>cisco-3d-stage</code>. A cloud session needs the project install, committed to the repo.</p>
+          <div class="code"><pre>claude "Which skills do you have? Summarize cisco-3d-stage in two lines."</pre></div></div></li>
+      </ol>
+    </div>
+    <div role="tabpanel" id="pane-app" aria-labelledby="tab-app" hidden>
+      <ol class="steps">
+        <li><div class="body"><h3>Make a zip with the skill at its root</h3><p>The app expects the skill folder itself inside the zip, not the whole repository.</p>
+          <div class="code"><pre>unzip SEVerse-Skill-main.zip && cd SEVerse-Skill-main && zip -r cisco-3d-stage.zip cisco-3d-stage</pre></div></div></li>
+        <li><div class="body"><h3>Upload it</h3><p>In claude.ai or the Claude desktop app, open Settings, then Capabilities, and upload <code>cisco-3d-stage.zip</code> under Skills. Code execution must be on. Menu names can differ by plan; your workspace admin may need to allow custom skills.</p></div></li>
+        <li><div class="body"><h3>Know the limit</h3><p>The app can plan scenes, write copy, notes and narration, and draft the build. Running the starter, rendering voices, and the headless review need a terminal, so use Claude Code or Cursor for the full build.</p></div></li>
+      </ol>
+    </div>
+    <div role="tabpanel" id="pane-cursor" aria-labelledby="tab-cursor" hidden>
+      <ol class="steps">
+        <li><div class="body"><h3>Unzip and copy</h3>
+          <div class="code"><pre>unzip SEVerse-Skill-main.zip && mkdir -p ~/.cursor/skills && cp -R SEVerse-Skill-main/cisco-3d-stage ~/.cursor/skills/</pre></div></div></li>
+        <li><div class="body"><h3>Reload Cursor</h3><p>Open a new agent chat. The agent picks the skill up from <code>SKILL.md</code> when you ask for a 3D or interactive presentation.</p></div></li>
+      </ol>
+    </div>
+
+    <div class="ds">
+      <div class="card c6">
+        <h3>Check the starter runs</h3>
+        <p class="hint">A 7 scene sample that exercises every layout. It does not run from <code>file://</code>; serve it.</p>
+        <div class="code"><pre>cd ~/.claude/skills/cisco-3d-stage/starter
+python3 -m http.server 8765</pre></div>
+        <p class="hint">Open <code>http://localhost:8765/</code>. Arrow keys step, P opens the presenter window, T the talking points, <code>?talktrack</code> the printable talk track.</p>
+      </div>
+      <div class="card c6">
+        <h3>Build from this generator</h3>
+        <ol class="rules">
+          <li>Fill the intake and pick a preset above.</li>
+          <li>Leave "Build with the cisco-3d-stage skill pack" on, then Copy prompt.</li>
+          <li>Paste it into Claude Code in an empty build folder.</li>
+          <li>Let it build. With the core principles on, it works straight through within the time budget; in guided mode, answer its questions or approve its storyboard.</li>
+          <li>Run the review and the checklist before you present.</li>
+        </ol>
+      </div>
+      <div class="card c6">
+        <h3>Narrated edition</h3>
+        <div class="code"><pre>pip install edge-tts rangehttpserver
+node tools/export_narration.mjs tmp/narr.json
+bash tools/sync_narrated.sh ../narrated
+python3 tools/gen_audio.py tmp/narr.json ../narrated/audio
+cd ../narrated && python3 -m RangeHTTPServer 8766</pre></div>
+        <p class="hint">Re-run <code>sync_narrated.sh</code> after code or copy edits, and <code>gen_audio.py</code> after narration edits.</p>
+      </div>
+      <div class="card c6">
+        <h3>Review, docs, publish</h3>
+        <div class="code"><pre>npm i -D puppeteer-core
+node tools/review.mjs http://localhost:8765/ 1440 900
+node tools/review.mjs http://localhost:8765/ 390 844
+node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
+        <p class="hint">Publish to any static host with HTTP range support (here.now works). Keep hosting keys in the CLI's credential file, never in the repo, and leave <code>tmp/</code> and <code>node_modules/</code> out.</p>
+      </div>
+      <div class="card c12">
+        <h3>What is in the pack</h3>
+<pre class="tree">cisco-3d-stage/
+  SKILL.md                  <span>workflow, quality bar, copy and security rules</span>
+  references/
+    stage-engine.md         <span>architecture, render pipeline, scene contract, sky, particles</span>
+    scene-recipes.md        <span>proven scene patterns and step choreography</span>
+    design-and-layouts.md   <span>palette, type, HUD layouts, components, motion, mobile</span>
+    presenting.md           <span>keys, presenter and talking-points windows, workshop, deep links</span>
+    narrated-edition.md     <span>voices, audio pipeline, film player, captions, AI narrator</span>
+    review-and-publish.md   <span>headless review, behavior tests, publishing, deliverables</span>
+  examples/                 <span>screenshots of the original build (internal: customer names)</span>
+  starter/                  <span>runnable 7 scene deck: index.html, js/, css/, media/, vendor/, tools/</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="lower">
+    <section class="panel" aria-labelledby="check-h" id="checklist-panel">
+      <div class="head">
+        <div class="eyebrow">05 · Before you present</div>
+        <div class="head-row"><h2 id="check-h">Pre-presentation checklist</h2><span class="progress" id="progress">0 of 8</span></div>
+      </div>
+      <ul class="checklist" id="checklist"></ul>
+      <div class="actions"><button type="button" id="reset-check">Reset checklist</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="iter-h" id="iter-panel">
+      <div class="head">
+        <div class="eyebrow">06 · After the first build</div>
+        <h2 id="iter-h">Edit one thing at a time</h2>
+      </div>
+      <ul class="rules">
+        <li>Refine in plain language: a bigger title, slower transitions, a reordered scene, a corrected label.</li>
+        <li>Never regenerate the whole experience to fix one detail. Edit the scene, panel or label and keep the rest.</li>
+        <li>After every edit, recheck the provenance labels and the Assumptions panel.</li>
+        <li>A modeled figure that moves into the headline carries its label with it.</li>
+        <li>Re-run <code>tools/review.mjs</code> at 1440 and 390 after any layout change.</li>
+      </ul>
+      <h3>If you use guided mode</h3>
+      <ul class="rules">
+        <li>When it shows you a storyboard, check that each panel says what is on screen and carries one idea.</li>
+        <li>Something on screen should change every few seconds; every click changes the world.</li>
+        <li>Any estimate should be marked on the panel itself, not only in a footer.</li>
+        <li>Answer its questions briefly, then let it build.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    <p>Skill pack: cisco-3d-stage from the SEVerse skill repository, created by Stephen Ewings, Solutions Engineer, Cisco. Third-party components are listed in its THIRD_PARTY_NOTICES.md. Cisco names and marks belong to Cisco Systems, Inc.</p>
+    <p>Method adapted from Futurepedia, "Claude Makes a New Kind of Video, Full Tutorial" by Kevin Hutson (<a href="https://www.youtube.com/watch?v=Ge1B-Ok1Pfk" target="_blank" rel="noopener">youtube.com/watch?v=Ge1B-Ok1Pfk</a>). This page holds structure, not customer facts.</p>
+  </footer>
+</div>
+
+<div class="talk" id="talk" role="dialog" aria-modal="true" aria-labelledby="talk-q" hidden>
+  <div class="talk-card">
+    <div class="talk-top"><span class="eyebrow" id="talk-count">Question 1</span><button type="button" id="talk-close" aria-label="Close">✕</button></div>
+    <div class="talk-bar"><i id="talk-prog" style="width:0"></i></div>
+    <h3 id="talk-q"></h3>
+    <p class="hint" id="talk-h"></p>
+    <div id="talk-body"></div>
+    <div class="talk-row">
+      <button type="button" class="bigmic" id="talk-mic" aria-label="Start dictation"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg></button>
+      <span class="sp"></span>
+      <button type="button" id="talk-back">Back</button>
+      <button type="button" id="talk-skip">Skip</button>
+      <button type="button" class="primary" id="talk-next">Next</button>
+    </div>
+    <div class="talk-status" id="talk-status" role="status"></div>
+    <div class="toggles">
+      <label><input type="checkbox" id="talk-read"> Read each question aloud</label>
+      <label><input type="checkbox" id="talk-auto" checked> Start listening on each question</label>
+    </div>
+    <p class="hint">Say "next", "skip" or "go back" when live dictation is on. Your answers fill the intake as you go.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STYLES = {
+    A: {
+      name: "Moonshot",
+      ref: "https://brisk-valley-7hw3.here.now/", refName: "The one-shot workshop prompt from A spoken word away, the framework behind B to E",
+      shape: "An open brief. You give the customer, the focus and the audience; the model researches, chooses the format, and builds the strongest experience it can within a time budget, then grades and improves its own work.",
+      skillShort: "The engine and design system as a foundation; the format is the model's call.",
+      skillNote: "Use it for the Cisco design system and the 3D engine. It is a foundation, not a format: the format is yours to choose.",
+      narration: "optional",
+      style: []
+    },
+    B: {
+      name: "3D scenario walkthrough",
+      ref: "https://rapid-rafter-dk38.here.now/", refName: "Securing CSX Wayside Infrastructure",
+      shape: "A 3D map of the customer's footprint and one representative site, a short guided story plus free exploration, and every scenario shown without and with Cisco.",
+      skillShort: "Engine for the map and the site; design system for the panels.",
+      skillNote: "Use its engine for the map and the site, and its design system for the panels.",
+      narration: "none",
+      style: [
+        "A 3D view of the customer's footprint (their sites, regions or network) and one representative site the viewer can enter. Both are clickable, and the viewer can orbit and zoom.",
+        "A short guided story, about 7 steps, with Previous, Next and autoplay, plus an Explore freely mode.",
+        "Scenarios that come from your research and the focus. Each one is shown two ways, without Cisco and with Cisco, with a toggle and a split view, plus a small panel with the outcome difference and where the data goes.",
+        "A persona panel: who is involved in each scenario and what they see.",
+        "A technology panel that ties each Cisco product to the scenario step where it acts.",
+        "A Sources panel."
+      ]
+    },
+    C: {
+      name: "Narrated 3D stage talk",
+      ref: "https://brisk-valley-7hw3.here.now/#0/0", refName: "A spoken word away · FutureSE narrated edition",
+      shape: "A row of lit 3D worlds that moves like a deck, with presenter tools and a narrated film edition that plays by itself.",
+      skillShort: "The skill's native format: its starter, layouts, presenter tools and narration tools.",
+      skillNote: "This is the skill's native format: build from its starter, layouts, presenter tools and narration tools.",
+      narration: "on",
+      style: [
+        "A presentation that moves like a deck: chapters and scenes, each scene its own 3D world, stepped with arrow keys or clicks, with a scene menu, deep links to any scene and step, and a progress indicator.",
+        "Each click changes the world, not only the text.",
+        "Presenter tools: notes, a presenter view, a talking points view, and a printable talk track.",
+        "A narrated film edition of the same deck: an AI narrator disclosed as AI, word-highlighted captions, voice and speed choices, chapters, and a share link to the exact moment.",
+        "If the story calls for audience participation, a live moment such as a short form or a link to a live demo."
+      ]
+    },
+    D: {
+      name: "Sourced executive briefing",
+      ref: "https://hollow-flame-f2tf.here.now/", refName: "Dominion Energy and Splunk · IT Leadership Briefing",
+      shape: "A 3D digital twin with a guided story on top, a strip of sourced headline figures, then a long scrolling briefing with anchor navigation.",
+      skillShort: "Engine for the digital twin; design system for the scrolling briefing.",
+      skillNote: "Use its engine for the digital twin and its design system for the briefing. The briefing is a scrolling page, not a deck.",
+      narration: "optional",
+      style: [
+        "At the top, a 3D digital twin of the customer's footprint with a short guided story in acts and clickable places. Each place opens a panel with what your research found there and where Cisco helps. Layer toggles show what they run today and what Cisco adds.",
+        "A strip of headline figures from your research, each linked to its source.",
+        "Below that, a long scrolling briefing with anchor navigation. Choose the sections from your research and the focus. Typical sections: a leadership summary, how Cisco lines up with their initiatives, the relevant industry or threat landscape, departments and personas, example dashboards, a sequenced roadmap, and a numbered list of sources.",
+        "Optionally, a short audio briefing."
+      ]
+    },
+    E: {
+      name: "4D AgenticOps experience",
+      ref: "https://rosy-beacon-q5c8.here.now/", refName: "MetLife x Cisco Cloud Control · AgenticOps 4D Experience",
+      shape: "A globe of the customer's locations that zooms to building and floor, plus time: missions that compare a traditional timeline with an AgenticOps timeline for the same business moment.",
+      skillShort: "Engine for the globe and building; narration tools for the tour.",
+      skillNote: "Use its engine for the globe, building and floor, and its narration tools for the tour. The format is mission-based, not a deck.",
+      narration: "on",
+      style: [
+        "A 3D globe of the customer's locations that zooms into a building and a floor.",
+        "Time is the fourth dimension: a mission clock and a draggable timeline. Each mission compares two timelines for the same business moment: the traditional way, and the AgenticOps way, where early signals are acted on hours or days ahead.",
+        "Missions that come from your research and the focus. Each has a decision point where the viewer makes the call. The best choice is an AI agent action that a person approves.",
+        "[customer]Two modes: a narrated executive tour, and a play mode where the viewer makes the calls.",
+        "[internal]Three modes: a narrated executive tour, a play mode, and a learning mode for the account team with talk tracks and discovery questions.",
+        "Each mission ends with its business outcome; anything estimated is marked as an estimate.",
+        "Narration with voice, speed and caption controls."
+      ]
+    }
+  };
+
+  STYLES.F = {
+    name: "Live operations twin",
+    ref: "https://topaz-kernel-3cga.here.now/", refName: "MSK Operations Twin",
+    ref2: "https://dapper-ginger-cs9a.here.now/", ref2Name: "Deltaverse · ATL Digital Twin",
+    shape: "A full-screen, living 3D twin of the customer's main site, run like an operations console: persona lenses, scenarios, disruptions you can inject, live or simulated time, drill-downs and dashboards. Pick the components below.",
+    skillShort: "Engine for the 3D site and its overlays; design system for the panels. An app layout, not a deck.",
+    skillNote: "Use its engine for the 3D site, its overlays and labels, and its design system for the panels. This is a full-screen app layout, not a deck.",
+    narration: "optional",
+    style: [
+      "A full-screen 3D digital twin of the customer's main site or campus, modeled from public information, that the viewer can orbit, zoom and click into. People, vehicles or equipment move through it.",
+      "Cisco shown inside the scene as layers, from sensing at the edge, through the data layer, to the operations layer above the site, with data flowing between them.",
+      "An app layout around the 3D view: a top bar, a left panel, a right panel and a bottom player, with a Focus mode that hides the panels."
+    ],
+    defaultOpts: ["tour", "journeys", "lenses", "scenarios", "disrupt", "drill", "layers", "time", "dash", "ai", "stack", "inspector", "people", "sources"]
+  };
+
+  const OPTIONS = [
+    { id: "tour", label: "Guided tour", text: "A narrated guided tour of a few minutes on landing that explains what the viewer is looking at and how to use it, with ways to jump to stories or explore on their own." },
+    { id: "journeys", label: "Narrated journeys", text: "Narrated journeys that follow one person (a customer, patient, traveler or employee) through their day, each playable With Cisco, Without Cisco, or side by side to compare, plus a walk-it-yourself mode." },
+    { id: "lenses", label: "Persona lenses", text: "Persona lenses across the top; choosing one reframes the scenarios, people and dashboards for that role." },
+    { id: "scenarios", label: "Scenario library and player", text: "A scenario library grouped by category, each card showing a before-and-after KPI, played step by step in a bottom player with play, pause and step controls." },
+    { id: "disrupt", label: "Disruption injector", text: "A scenario selector that injects a disruption into the live view (weather, an outage, a cyberattack, a demand surge), with a Cisco remediation on/off switch so the viewer sees both outcomes." },
+    { id: "drill", label: "Drill-down interiors", text: "Drill-downs from the whole site into specific buildings, floors, rooms or areas, each with its own scene." },
+    { id: "layers", label: "Data layers", text: "Toggleable data layers on the 3D view, such as location heatmaps, Wi-Fi coverage, data flows, AI touchpoints and wayfinding." },
+    { id: "time", label: "Time and live data", text: "A clock with speed controls and a time-travel strip, a daylight and a night view, and live public feeds where they exist (weather, flight or traffic data) with a simulated fallback." },
+    { id: "dash", label: "Executive dashboards", text: "Dashboard views for leaders: priorities with milestones and AI-generated insights, operations analytics, and the health of the most critical systems." },
+    { id: "ai", label: "AI usage and tokenomics", text: "An AI view showing where AI is used, its safety guardrails, and token usage and cost by department." },
+    { id: "stack", label: "Technology stack view", text: "A view of the Cisco technology as layers, from the edge through the data layer to operations, tied to where each product appears in the scene." },
+    { id: "inspector", label: "Inspector panel", text: "Click any building, room, person or system to open its details in a side panel." },
+    { id: "people", label: "People directory", text: "A directory of the people in the stories, each with their role, what they care about, and the devices they use." },
+    { id: "sources", label: "Sources and methodology", text: "A Sources and methodology panel that separates what comes from public sources from what was generated for the demo." }
+  ];
+
+  const CHECKLIST = [
+    "Every public claim has a source in the Sources panel.",
+    "Every modeled figure says modeled or illustrative on the panel where it appears.",
+    "Every assumption is listed, including any assumed fact that is not publicly confirmed.",
+    "No customer internal data appears anywhere, and no dashboard is presented as real customer data.",
+    "The without-Cisco and traditional timelines are fair: they describe the current way of working, not a caricature of it.",
+    "Every agent action ends at a human approval gate.",
+    "The build matches the preset you chose and the brief you gave.",
+    "Links, narration, and share controls were tested from a clean browser session."
+  ];
+
+  const STORE_KEY = "csg-brief-v1";
+  const CHECK_KEY = "csg-check-v1";
+  const $ = (id) => document.getElementById(id);
+  const form = $("brief");
+  const textFields = ["account", "audience", "where", "discuss", "items", "personas", "places", "scenarios", "assumptions", "output", "context", "mpersonas", "examples"];
+
+  function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
+  function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+  function readState() {
+    const s = {};
+    textFields.forEach((n) => { s[n] = form.elements[n].value.trim(); });
+    s.style = document.querySelector('input[name="style"]:checked').value;
+    s.skill = $("o-skill").checked;
+    s.purpose = $("pu-internal").checked ? "internal" : "customer";
+    s.oneshot = $("o-oneshot").checked;
+    s.straight = $("o-straight").checked;
+    s.timebox = $("o-timebox").checked;
+    s.masterpiece = $("o-masterpiece").checked;
+    s.hours = $("f-hours").value;
+    s.length = $("f-length").value;
+    s.orch = $("o-orch").checked;
+    s.pmode = $("pm-specific").checked ? "specific" : "wide";
+    s.optsBy = optsBy;
+    s.ver = 2;
+    return s;
+  }
+  let optsBy = {}, optsStyle = null;
+  function writeState(s) {
+    optsBy = (s && s.optsBy && typeof s.optsBy === "object") ? s.optsBy : {};
+    optsStyle = null;
+    if (s) textFields.forEach((n) => { if (/Northline|EXAMPLE ONLY|wayside|trackside/i.test(s[n] || "")) s[n] = ""; });
+    if (s && !s.ver && /^[A-D]$/.test(s.style)) s.style = { A: "B", B: "C", C: "D", D: "E" }[s.style];
+    textFields.forEach((n) => { form.elements[n].value = (s && s[n]) || ""; });
+    const st = (s && STYLES[s.style]) ? s.style : "A";
+    document.querySelector('input[name="style"][value="' + st + '"]').checked = true;
+    $("o-skill").checked = s && typeof s.skill === "boolean" ? s.skill : true;
+    $(s && s.purpose === "internal" ? "pu-internal" : "pu-customer").checked = true;
+    ["oneshot", "straight", "timebox", "masterpiece"].forEach((k) => { $("o-" + k).checked = s && typeof s[k] === "boolean" ? s[k] : true; });
+    $("f-hours").value = s && ["0.5", "1", "2", "4", "8"].includes(s.hours) ? s.hours : "2";
+    $("f-length").value = s && ["model", "5", "10", "15", "20", "30", "45"].includes(s.length) ? s.length : "10";
+    $("o-orch").checked = s && typeof s.orch === "boolean" ? s.orch : true;
+    $(s && s.pmode === "specific" ? "pm-specific" : "pm-wide").checked = true;
+  }
+
+  const lines = (t) => t.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  const TBD = "TBD";
+  const val = (v) => v || TBD;
+  const list = (v) => { const l = lines(v); return l.length ? l.map((x) => "  - " + x).join("\n") : "  " + TBD; };
+
+  function researchSection(acct, focus) {
+    return "§RESEARCH\n" +
+      "Before you design, research " + acct + ": the business, its strategy and current initiatives, and anything recent that matters to " + (focus ? "the focus" : "this audience") + ", such as earnings calls, filings, announcements, leadership changes, incidents or outages, and regulatory developments. Prioritize the last 12 months and note dates. Then research the Cisco solutions that fit, through that lens. Cite your sources. Where something is not public, make a reasonable assumption and say so in your reply.";
+  }
+  function purposeSection(s) {
+    const acct = val(s.account);
+    if (s.purpose === "internal") {
+      return "§WHO IT IS FOR\n" +
+        "This is an internal explainer for the Cisco account team, not for the customer. Explain " + (s.discuss || "the focus") + " in the context of " + acct + ": what it is, how it works, why it matters to this account, and how to position it" + (s.audience ? " with " + s.audience : "") + ". Background, sources, talk tracks and discovery questions belong here.\n" +
+        "Narrate it so it can be watched on its own, and include speaker notes for anyone presenting it. Disclose the narrator as AI.";
+    }
+    return "§WHO IT IS FOR\n" +
+      "This is customer-facing. It will be shown to " + val(s.audience) + " at " + acct + ". Speak to them about their priorities and the outcomes they care about. Use the research to shape the story, not to fill the screen: show only the facts that move the story forward, keep sources in a sources panel and the speaker notes, and leave out background they already know about their own organization. Do not address the account team, sales strategy, or discovery questions.\n" +
+      "It must work two ways: narrated from start to finish, so it can be sent as a link or a video when we cannot meet, and presented live, with speaker notes for every scene. Disclose the narrator as AI.";
+  }
+  const forPurpose = (arr, s) => arr.filter((x) => !/^\[(customer|internal)\]/.test(x) || x.startsWith("[" + (s.purpose === "internal" ? "internal" : "customer") + "]")).map((x) => x.replace(/^\[(customer|internal)\]/, ""));
+  const hoursText = (h) => h === "0.5" ? "30 minutes" : h === "1" ? "1 hour" : h + " hours";
+  const isGuided = (s) => !(s.oneshot && s.straight && s.timebox && s.masterpiece);
+  const SKILL_FIND = "look for cisco-3d-stage/SKILL.md in your skills folder, such as ~/.claude/skills or the project's .claude/skills";
+  function workSection(s) {
+    const L = [];
+    if (!isGuided(s)) {
+      L.push("This is a one-shot prompt. Do not ask me any questions, and do not stop to show me a plan, outline or storyboard for approval: plan internally, then build. Where something is unclear, make a reasonable assumption, note it, and keep going.");
+      L.push("Make it real, then make it perfect: get a complete, working version running end to end first, then use the rest of your time to improve it.");
+      L.push("You have up to " + hoursText(s.hours) + " of working time. It is a ceiling, not a target: take the time to research deeply, design carefully and iterate, and do not rush to a first draft. Finish early only when the work clears the bar. Note the time when you start and check it as you go; as the limit nears, finish and polish what you have instead of starting something new.");
+      return "§HOW TO WORK\n" + L.join("\n");
+    }
+    L.push("Work with me through these steps, in order, and wait for my OK wherever a step says so:");
+    const steps = [];
+    if (s.skill) steps.push("Confirm the cisco-3d-stage skill is installed: " + SKILL_FIND + ". If you cannot find it, stop, ask me to install it, and wait until I confirm. The visuals depend on it.");
+    steps.push(s.oneshot ? "Do not ask me questions; make reasonable assumptions and note them." : "If anything critical is missing, ask me up to three short questions, and wait for my answers.");
+    steps.push("Research, then show me a storyboard and the narration script: one panel per scene with what is on screen, the on-screen words, the narration line, and the duration. Wait for my OK, and change it as I ask.");
+    steps.push("Build to the approved storyboard and script. Make it real first, end to end, then make it better.");
+    steps.push("When it is built, list every estimate and every assumption so I can check them before I present.");
+    L.push(steps.map((x, i) => (i + 1) + ". " + x).join("\n"));
+    if (s.timebox) L.push("You have up to " + hoursText(s.hours) + " of working time, not counting the time you wait for me. It is a ceiling, not a target: go deep, and do not rush.");
+    return "§HOW TO WORK\n" + L.join("\n");
+  }
+  function masterpieceSection(s) {
+    const ex = lines(s.examples);
+    return "§CREATE A MASTERPIECE\nCreate a masterpiece." +
+      (ex.length ? "\nHere is what a masterpiece looks like to me. Treat these as a bar to clear, not a template to copy:\n" + ex.map((x) => "- " + x).join("\n") : "");
+  }
+  function timeSection(s) {
+    return "§LENGTH\n" +
+      (s.length === "model"
+        ? "Choose the length of the finished experience to suit this audience, and tell me what you chose."
+        : "The full narrated run should last about " + s.length + " minutes from start to finish. Viewers can explore beyond that on their own.");
+  }
+  function orchSection() {
+    return "§HOW TO RUN THIS\nIf your environment can run sub-agents, act as the orchestrator: give research, design, build and review to separate agents working in parallel, and have a separate reviewer agent judge the running build. If it cannot, work through the same phases yourself, in order.";
+  }
+  function skillSection(note, s) {
+    return "§SKILL\nUse the cisco-3d-stage skill for every visual: the 3D scenes, palette, type, glass panels and motion come from it, not from a generic template or a plain page. Read SKILL.md and its references first. " + note + "\n" +
+      (isGuided(s)
+        ? "If you could not confirm the skill in step 1, do not build without it."
+        : "Check that it is installed: " + SKILL_FIND + ". If it is not, do not stop to ask: build as close to its design system as you can, and tell me at the end that it was missing so I can install it.");
+  }
+
+  const handback = (s) => "When you are done, give me the link" + "" + " and the assumptions you made" + (s.skill && !isGuided(s) ? ", and say whether the cisco-3d-stage skill was installed." : ".");
+
+  function buildMoon(s) {
+    const out = [];
+    out.push("Build an interactive, self contained web experience that I can present and share as a link. " +
+      "The customer is " + val(s.account) + ". I want the focus to be " + val(s.discuss) + ". " + (s.purpose === "internal" ? "It is for our account team." : "The audience is " + val(s.audience) + "."));
+    out.push(workSection(s));
+    out.push("The format, story, structure and visual style are yours to choose. Use the most advanced graphics and presentation techniques you can deliver well.");
+    out.push(purposeSection(s));
+    out.push(timeSection(s));
+    out.push(researchSection(val(s.account), s.discuss));
+    const ctx = lines(s.context);
+    if (ctx.length) out.push("§CONTEXT FROM ME (not public)\n" + ctx.map((x) => "- " + x).join("\n"));
+    out.push("§PERSONAS\n" + (s.pmode === "specific" && lines(s.mpersonas).length
+      ? "Cover these personas, and create use cases for each:\n" + lines(s.mpersonas).map((x) => "- " + x).join("\n")
+      : "Choose the personas that matter to this audience, as many as the story needs, and create use cases for each."));
+    if (s.orch) out.push(orchSection());
+    if (s.skill) out.push(skillSection(STYLES.A.skillNote, s));
+    if (s.masterpiece) out.push(masterpieceSection(s));
+    out.push(handback(s));
+    return out.join("\n\n");
+  }
+
+  function buildPrompt(s) {
+    if (s.style === "A") return buildMoon(s);
+    const st = STYLES[s.style];
+    const out = [];
+    out.push("Build an interactive, self contained web experience that I can present and share as a link, in the style described below. " +
+      "The customer is " + val(s.account) + ". " + (s.purpose === "internal" ? "It is for our account team." : "The audience is " + val(s.audience) + ".") + " The focus is " + val(s.discuss) + ".");
+    out.push(workSection(s));
+    out.push(purposeSection(s));
+    out.push(timeSection(s));
+    out.push(researchSection(val(s.account), s.discuss));
+    const known = [];
+    const add = (label, v) => { const l = lines(v); if (l.length) known.push(label + ":\n" + l.map((x) => "- " + x).join("\n")); };
+    add("Where they are", s.where);
+    add("Must include", s.items);
+    add("Personas", s.personas);
+    add("Places", s.places);
+    add("Scenarios", s.scenarios);
+    add("Assumptions", s.assumptions);
+    add("Output", s.output);
+    if (known.length) out.push("§WHAT I ALREADY KNOW\nUse this alongside your research.\n\n" + known.join("\n\n"));
+    out.push("§STYLE: " + st.name.toUpperCase() + "\nBuild exactly this format. Everything inside it (the story, scenes, scenarios, personas and figures) comes from your research and what I gave you.\n" + forPurpose(st.style, s).concat(OPTIONS.filter((o) => (s.opts || []).includes(o.id)).map((o) => o.text)).map((x) => "- " + x).join("\n"));
+    if (s.orch) out.push(orchSection());
+    if (s.skill) out.push(skillSection(st.skillNote + " Where the skill's defaults differ from the style above, follow the style.", s));
+    if (s.masterpiece) out.push(masterpieceSection(s));
+    out.push(handback(s));
+    return out.join("\n\n");
+  }
+
+  function renderPrompt(text) {
+    let h = esc(text);
+    h = h.replace(/§([A-Z :0-9-]+[a-z0-9-]*)/g, '<span class="sec">$1</span>');
+    h = h.replace(/\bTBD\b/g, '<span class="tbd">TBD</span>');
+    $("prompt").innerHTML = h;
+  }
+
+  function readiness(s) {
+    const checks = [];
+    const req = [["account", "Customer"], ["discuss", s.purpose === "internal" ? "Tool or solution" : "Focus"]];
+    if (s.purpose !== "internal") req.push(["audience", "Audience"]);
+    const miss = req.filter(([k]) => !s[k]).map(([, l]) => l);
+    checks.push(miss.length ? { flag: true, t: "Still empty: " + miss.join(", ") + "." } : { flag: false, t: "The basics are set." });
+    checks.push({ flag: false, t: s.purpose === "internal" ? "Internal explainer for the account team: background, sources and talk tracks included." : "Customer-facing: narrated end to end for sending, with speaker notes for presenting live." });
+    if (s.style === "A") {
+      if (s.pmode === "specific" && !lines(s.mpersonas).length) checks.push({ flag: true, t: "Specific personas is selected but none are listed." });
+    } else {
+      const extra = ["where", "items", "personas", "places", "scenarios", "assumptions", "output"].filter((k) => s[k]).length;
+      checks.push({ flag: false, t: extra ? extra + " optional field" + (extra > 1 ? "s" : "") + " filled; only filled fields go into the prompt." : "Only the basics are filled; the model researches the rest." });
+    }
+    const offP = [["oneshot", "one-shot"], ["straight", "build straight through"], ["timebox", "time budget"], ["masterpiece", "masterpiece"]].filter(([k]) => !s[k]).map(([, l]) => l);
+    checks.push(offP.length ? { flag: true, t: "Guided mode (" + offP.join(", ") + " off): the model checks the skill is installed, " + (s.oneshot ? "" : "may ask you questions, ") + "and waits for you to approve a storyboard and narration script before it builds." } : { flag: false, t: "Core principles on: one-shot, straight-through build, time budget, masterpiece." });
+    checks.push({ flag: false, t: (s.timebox ? "Up to " + hoursText(s.hours) + " to build; " : "No build time limit; ") + (s.length === "model" ? "length left to the model." : "about " + s.length + " minutes to run.") });
+    if (!s.orch) checks.push({ flag: true, t: "Multi-agent build is off. Recommended on, with Claude Opus 5.5 or an equivalent model." });
+    if (!s.skill) checks.push({ flag: true, t: "Skill pack is off, so the build will not use the Cisco stage engine or design system." });
+    $("readiness").innerHTML = checks.map((c) =>
+      '<div class="check-line' + (c.flag ? " flag" : "") + '"><span class="dot" aria-hidden="true"></span><span>' + esc(c.t) + "</span></div>").join("");
+  }
+
+  /* ---------- mock-ups in the cisco-3d-stage look ---------- */
+  const K = {
+    mid: "#050e1d", navy: "#07182d", deep: "#0d274d", blue: "#00bceb", sky: "#02c8ff", ice: "#9be7ff",
+    green: "#6cc04a", amber: "#fbab18", red: "#e2231a", pink: "#f25c9a", violet: "#8e7cff", teal: "#2de2c5",
+    ink: "#e8f1fb", muted: "#9fb3c8", faint: "#5f7891", line: "#1d3a57", glass: "#0a1e36",
+    pub: "#7fc4ff", mod: "#b9a8ff", rec: "#fbc35a", work: "#8fdc6e"
+  };
+  let uidN = 0;
+  function T(x, y, str, o) {
+    o = o || {};
+    return '<text x="' + x + '" y="' + y + '" fill="' + (o.fill || K.ink) + '" font-size="' + (o.size || 8) + '"' +
+      (o.weight ? ' font-weight="' + o.weight + '"' : "") + (o.anchor ? ' text-anchor="' + o.anchor + '"' : "") +
+      (o.ls ? ' letter-spacing="' + o.ls + '"' : "") + (o.cls ? ' class="' + o.cls + '"' : "") + (o.op ? ' opacity="' + o.op + '"' : "") + (o.extra || "") + ">" + esc(str) + "</text>";
+  }
+  function R(x, y, w, h, fill, rx, stroke, extra) {
+    return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (rx || 0) + '" fill="' + fill + '"' +
+      (stroke ? ' stroke="' + stroke + '"' : "") + (extra || "") + "/>";
+  }
+  const glass = (x, y, w, h, rx) => R(x, y, w, h, K.glass, rx == null ? 8 : rx, K.line, ' fill-opacity=".86"');
+  function tag(x, y, label, kind) {
+    const w = Math.round(label.length * 4.3 + 9), c = K[kind] || K.pub;
+    return R(x, y, w, 11, "none", 3, c, ' stroke-width=".8"') + T(x + 4.5, y + 8, label, { fill: c, size: 6.2, cls: "mono", weight: 600 });
+  }
+  function btn(x, y, w, label, kind, h) {
+    h = h || 16;
+    const prim = kind === "primary", on = kind === "on";
+    const fill = prim ? "url(#pb)" : on ? "#0b3550" : K.glass;
+    const stroke = prim || on ? "rgba(0,188,235,.75)" : K.line;
+    return R(x, y, w, h, fill, 5, stroke) + T(x + w / 2, y + h / 2 + 3, label, { fill: K.ink, size: 7, anchor: "middle", weight: prim || on ? 600 : 500 });
+  }
+  function co(n, x, y) {
+    return '<g><circle cx="' + x + '" cy="' + y + '" r="8" fill="' + K.ice + '" stroke="' + K.mid + '" stroke-width="2"/>' +
+      T(x, y + 3.2, String(n), { fill: K.mid, size: 8.5, anchor: "middle", weight: 700, cls: "mono" }) + "</g>";
+  }
+  function mark(x, y, s) {
+    s = s || 1;
+    const hs = [5, 10, 16, 10, 5, 10, 16, 10, 5];
+    return '<g transform="translate(' + x + " " + y + ") scale(" + s + ')" fill="' + K.blue + '">' +
+      hs.map((h, i) => '<rect x="' + (1 + i * 4) + '" y="' + (19 - h) + '" width="2" height="' + h + '" rx="1"/>').join("") + "</g>";
+  }
+  function defs(u, extra) {
+    return "<defs>" +
+      '<linearGradient id="g' + u + '" x1="0" x2="1"><stop offset="0" stop-color="#7fe3ff"/><stop offset=".45" stop-color="#00bceb"/><stop offset="1" stop-color="#6cc04a"/></linearGradient>' +
+      '<linearGradient id="pb" x1="0" x2="1"><stop offset="0" stop-color="#00bceb" stop-opacity=".45"/><stop offset="1" stop-color="#6cc04a" stop-opacity=".45"/></linearGradient>' +
+      '<filter id="bl' + u + '" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>' +
+      (extra || "") + "</defs>";
+  }
+  const gradText = (u) => "url(#g" + u + ")";
+  function frame(url, inner, u, extraDefs) {
+    return '<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img">' + defs(u, extraDefs) +
+      R(0, 0, 640, 400, K.mid, 12) + inner + R(0, 0, 640, 20, "#030a15", 12) + R(0, 10, 640, 10, "#030a15") +
+      '<circle cx="13" cy="10" r="3.2" fill="#ff5f57" opacity=".7"/><circle cx="24" cy="10" r="3.2" fill="#febc2e" opacity=".7"/><circle cx="35" cy="10" r="3.2" fill="#28c840" opacity=".7"/>' +
+      R(210, 4, 220, 12, K.mid, 6, K.line) + T(320, 12.5, url, { fill: K.muted, size: 6.5, anchor: "middle", cls: "mono" }) + "</svg>";
+  }
+  function rnd(seed) { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+  function stars(n, seed, x0, y0, w, h, c, maxR) {
+    const r = rnd(seed); let s = "";
+    for (let i = 0; i < n; i++) s += '<circle cx="' + (x0 + r() * w).toFixed(1) + '" cy="' + (y0 + r() * h).toFixed(1) + '" r="' + (0.3 + r() * (maxR || 0.9)).toFixed(2) + '" fill="' + (c || K.ice) + '" opacity="' + (0.25 + r() * 0.6).toFixed(2) + '"/>';
+    return s;
+  }
+  function hot(x, y, c, label, side, big) {
+    let s = '<circle cx="' + x + '" cy="' + y + '" r="' + (big ? 9 : 6) + '" fill="' + c + '" opacity=".22"/>' +
+      '<circle cx="' + x + '" cy="' + y + '" r="' + (big ? 3.4 : 2.6) + '" fill="' + c + '" stroke="' + K.mid + '" stroke-width="1"/>';
+    if (label) {
+      const w = label.length * 3.55 + 10, lx = side === "l" ? x - w - 6 : x + 6;
+      s += R(lx, y - 6, w, 12, K.mid, 6, K.line, ' fill-opacity=".9"') + T(lx + 5, y + 2.3, label, { size: 6, fill: K.ink });
+    }
+    return s;
+  }
+
+  /* A · CSX wayside walkthrough */
+  function mockA(u) {
+    let s = '<radialGradient id="ga' + u + '" cx="62%" cy="45%" r="60%"><stop offset="0" stop-color="#0d2f52"/><stop offset="1" stop-color="#050e1d"/></radialGradient>';
+    const extra = s;
+    s = R(0, 20, 640, 380, "url(#ga" + u + ")") + stars(70, 7, 160, 30, 480, 330, K.ice, 0.7);
+    // network map, schematic
+    s += '<path d="M360,74 L428,64 L476,82 L522,76 L560,96 L590,128 L580,160 L596,190 L576,216 L552,242 L534,264 L548,302 L520,322 L498,292 L468,266 L440,272 L404,262 L378,238 L356,200 L342,160 L340,118 Z" fill="#0b2744" fill-opacity=".75" stroke="' + K.blue + '" stroke-opacity=".45" stroke-width=".8"/>';
+    for (let i = 0; i < 9; i++) s += '<line x1="' + (346 + i * 28) + '" y1="66" x2="' + (346 + i * 28) + '" y2="322" stroke="' + K.blue + '" stroke-opacity=".07"/>';
+    for (let i = 0; i < 9; i++) s += '<line x1="340" y1="' + (70 + i * 30) + '" x2="600" y2="' + (70 + i * 30) + '" stroke="' + K.blue + '" stroke-opacity=".07"/>';
+    const corr = ["M370,96 L440,166 L468,152 L560,150 L586,120", "M440,166 L422,204 L456,250 L520,300", "M468,152 L494,214 L456,250", "M560,150 L548,206 L520,300"];
+    corr.forEach((d) => { s += '<path d="' + d + '" fill="none" stroke="' + K.amber + '" stroke-width="1.6" stroke-opacity=".85" stroke-dasharray="4 3"/>'; });
+    s += '<path d="M494,214 L470,206" stroke="' + K.red + '" stroke-width="1.4"/>' +
+      '<circle cx="494" cy="214" r="13" fill="' + K.red + '" opacity=".16"/>' +
+      hot(520, 300, K.blue, "CSX Headquarters", "l", true) + hot(440, 166, K.green, "") + hot(560, 150, K.violet, "") + hot(456, 250, K.amber, "") +
+      hot(494, 214, K.red, "Blue Ridge Subdivision", "r") + hot(370, 96, K.amber, "") + hot(586, 120, K.amber, "");
+    // scrim over left of map
+    s += '<rect x="150" y="20" width="270" height="380" fill="' + K.mid + '" opacity=".35"/>';
+    // topbar
+    s += R(0, 20, 640, 28, "#030a15", 0, null, ' fill-opacity=".8"') + mark(10, 25, 0.8) +
+      T(42, 32, "Cisco for CSX", { size: 7.5, weight: 700 }) + T(42, 41, "Securing the wayside", { size: 5.8, fill: K.muted }) +
+      R(118, 26, 104, 16, K.glass, 5, K.line) + R(119, 27, 54, 14, "#0b3550", 4) + T(146, 36.5, "Network map", { size: 6.3, anchor: "middle", weight: 600 }) + T(197, 36.5, "Wayside site", { size: 6.3, anchor: "middle", fill: K.muted }) +
+      R(228, 26, 142, 16, K.glass, 5, K.line) + R(229, 27, 50, 14, "#3a1410", 4, "rgba(226,35,26,.6)") + T(254, 36.5, "Without Cisco", { size: 6.1, anchor: "middle", weight: 600 }) +
+      T(303, 36.5, "With Cisco", { size: 6.1, anchor: "middle", fill: K.muted }) + T(344, 36.5, "Split view", { size: 6.1, anchor: "middle", fill: K.muted }) +
+      btn(484, 26, 54, "Guided story", "primary") + btn(541, 26, 36, "Sources") + btn(580, 26, 52, "Assumptions");
+    // persona rail
+    s += glass(8, 54, 142, 252, 10) + T(16, 67, "Personas", { size: 6.3, weight: 700, fill: K.ice }) + T(50, 67, "Technology", { size: 6.3, fill: K.muted }) + T(88, 67, "Scenarios", { size: 6.3, fill: K.muted }) + T(121, 67, "Places", { size: 6.3, fill: K.muted }) +
+      '<line x1="16" y1="70" x2="44" y2="70" stroke="' + K.blue + '" stroke-width="1.2"/>';
+    [["CI", "Chief Info. Security Officer", "PUBLIC", K.blue], ["DT", "Chief Digital and Tech. Officer", "PUBLIC", K.violet], ["DS", "Train Dispatcher", "MODELED", K.amber], ["SM", "Signal Maintainer", "MODELED", K.green], ["OT", "OT Network Engineer", "MODELED", K.teal], ["SA", "SOC Analyst", "MODELED", K.pink], ["FT", "Field Comms Technician", "MODELED", K.sky]].forEach((p, i) => {
+      const y = 80 + i * 32;
+      s += '<circle cx="24" cy="' + (y + 8) + '" r="8" fill="' + p[3] + '" fill-opacity=".22" stroke="' + p[3] + '" stroke-width=".8"/>' +
+        T(24, y + 10.5, p[0], { size: 5.8, anchor: "middle", weight: 700, fill: p[3] }) +
+        T(37, y + 6, p[1], { size: 6.3, weight: 600 }) + tag(37, y + 10, p[2], p[2] === "PUBLIC" ? "pub" : "mod") +
+        T(37 + (p[2].length * 4.3 + 13), y + 18, i < 2 ? "public source" : "modeled persona", { size: 5.3, fill: K.faint });
+    });
+    // hero
+    s += T(168, 138, "EXECUTIVE BRIEFING FOR THE CSX CISO AND CIO", { size: 6.2, fill: K.blue, weight: 600, ls: "1.2" }) +
+      T(166, 166, "Every bungalow, a sensor.", { size: 22, weight: 800, ls: "-0.6" }) +
+      T(166, 192, "Every mile, assured.", { size: 22, weight: 800, ls: "-0.6", fill: gradText(u) }) +
+      T(168, 210, "An interactive 3D walk through the eastern network and a", { size: 7, fill: K.muted }) +
+      T(168, 220, "representative wayside control point. Every scenario told", { size: 7, fill: K.muted }) +
+      T(168, 230, "two ways, and where Microsoft Sentinel receives the context.", { size: 7, fill: K.muted }) +
+      btn(168, 242, 86, "Start the guided story", "primary", 18) + btn(258, 242, 60, "Explore freely", null, 18) +
+      T(168, 274, "Public facts cited in Sources. Personas, site layout and KPIs", { size: 5.6, fill: K.faint }) +
+      T(168, 282, "are modeled and labeled as such. See Assumptions.", { size: 5.6, fill: K.faint });
+    // legend
+    s += glass(8, 312, 142, 46, 8);
+    [["HQ", K.blue], ["Operations center", K.green], ["Data center", K.violet], ["Yard / terminal", K.amber]].forEach((l, i) => {
+      const x = 16 + (i % 2) * 64, y = 323 + Math.floor(i / 2) * 10;
+      s += '<circle cx="' + x + '" cy="' + (y - 2) + '" r="2.4" fill="' + l[1] + '"/>' + T(x + 5, y, l[0], { size: 5.6, fill: K.muted });
+    });
+    s += '<line x1="14" y1="345" x2="26" y2="345" stroke="' + K.amber + '" stroke-dasharray="3 2"/>' + T(30, 347, "Corridors (schematic, modeled)", { size: 5.6, fill: K.muted }) +
+      T(16, 355, "Click a marker. Drag to orbit, scroll to zoom.", { size: 5.3, fill: K.faint });
+    // story bar
+    s += glass(160, 352, 470, 38, 10) + T(172, 368, "Ready", { size: 8, weight: 700 }) + T(172, 380, "Press play or the arrow keys to start the guided story", { size: 6.5, fill: K.muted });
+    for (let i = 0; i < 7; i++) s += '<circle cx="' + (430 + i * 9) + '" cy="371" r="2.6" fill="' + (i === 0 ? K.blue : "none") + '" stroke="' + K.ice + '" stroke-opacity=".5"/>';
+    s += btn(500, 362, 22, "‹") + btn(526, 362, 64, "Play story", "primary") + btn(594, 362, 22, "›");
+    // scenario card
+    s += glass(470, 200, 160, 120, 10) + T(480, 214, "SCENARIO 2 OF 6 · MODELED", { size: 5.8, fill: K.muted, cls: "mono" }) +
+      T(480, 226, "Hot box at a defect detector", { size: 7.4, weight: 700 }) +
+      T(480, 240, "WITHOUT", { size: 5.8, fill: "#ff7b6e", cls: "mono", weight: 600 }) + T(556, 240, "WITH CISCO", { size: 5.8, fill: K.green, cls: "mono", weight: 600 });
+    [["Alarm at the desk", "Event to Sentinel"], ["Crew drives out", "Remote isolation"], ["Diagnose on site", "One targeted trip"]].forEach((r, i) => {
+      const y = 245 + i * 17;
+      s += R(480, y, 70, 14, "#2a0f10", 3, "rgba(226,35,26,.45)") + T(484, y + 9.5, r[0], { size: 5.8 }) +
+        R(556, y, 66, 14, "#0f2a16", 3, "rgba(108,192,74,.5)") + T(560, y + 9.5, r[1], { size: 5.8 });
+    });
+    s += T(480, 312, "Trips per event  4 → 1", { size: 6.6, weight: 700, fill: K.ice }) + tag(578, 304, "MODELED", "mod");
+    s += co(1, 146, 58) + co(2, 300, 24) + co(3, 600, 100) + co(4, 164, 356) + co(5, 628, 24) + co(6, 626, 204);
+    return frame("rapid-rafter-dk38.here.now", s, u, extra);
+  }
+
+  /* B · FutureSE narrated stage */
+  function mockB(u) {
+    const extra = '<linearGradient id="sk' + u + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020611"/><stop offset=".55" stop-color="#06213f"/><stop offset="1" stop-color="#03101f"/></linearGradient>' +
+      '<linearGradient id="bar' + u + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6fbff"/><stop offset=".35" stop-color="#9be7ff"/><stop offset="1" stop-color="#00bceb" stop-opacity=".2"/></linearGradient>' +
+      '<linearGradient id="scr' + u + '" x1="0" x2="1"><stop offset="0" stop-color="#050e1d" stop-opacity=".85"/><stop offset=".45" stop-color="#050e1d" stop-opacity=".35"/><stop offset=".6" stop-color="#050e1d" stop-opacity="0"/></linearGradient>';
+    let s = R(0, 20, 640, 380, "url(#sk" + u + ")");
+    s += '<ellipse cx="430" cy="120" rx="220" ry="46" fill="' + K.teal + '" opacity=".07" filter="url(#bl' + u + ')"/><ellipse cx="470" cy="160" rx="180" ry="30" fill="' + K.blue + '" opacity=".12" filter="url(#bl' + u + ')"/>';
+    s += stars(160, 11, 0, 24, 640, 220, K.ice, 0.8);
+    // horizon grid
+    const vx = 440, vy = 236;
+    for (let i = -12; i <= 12; i++) s += '<line x1="' + vx + '" y1="' + vy + '" x2="' + (vx + i * 70) + '" y2="400" stroke="' + K.blue + '" stroke-opacity=".22" stroke-width=".7"/>';
+    [240, 246, 254, 265, 280, 300, 328, 366].forEach((y) => { s += '<line x1="0" y1="' + y + '" x2="640" y2="' + y + '" stroke="' + K.blue + '" stroke-opacity=".2" stroke-width=".7"/>'; });
+    // bridge bars with glow and reflection
+    const hs = [34, 66, 112, 66, 34, 66, 112, 66, 34];
+    let bars = "", refl = "";
+    hs.forEach((h, i) => {
+      const x = 352 + i * 20;
+      bars += R(x, 236 - h, 9, h, "url(#bar" + u + ")", 4.5);
+      refl += R(x, 238, 9, h * 0.45, K.blue, 4.5, null, ' opacity=".12"');
+    });
+    s += '<g filter="url(#bl' + u + ')" opacity=".8">' + bars + "</g>" + bars + refl;
+    s += '<ellipse cx="436" cy="238" rx="120" ry="7" fill="' + K.ice + '" opacity=".22" filter="url(#bl' + u + ')"/>';
+    s += '<ellipse cx="436" cy="150" rx="150" ry="22" fill="none" stroke="' + K.ice + '" stroke-opacity=".25"/><ellipse cx="436" cy="150" rx="110" ry="14" fill="none" stroke="' + K.blue + '" stroke-opacity=".3"/>';
+    s += R(0, 20, 640, 380, "url(#scr" + u + ")");
+    // progress + topbar
+    s += R(0, 20, 640, 2.5, "#0b1d33") + R(0, 20, 72, 2.5, "url(#g" + u + ")");
+    s += mark(14, 30, 0.75) + T(44, 40, "FutureSE", { size: 8.5, weight: 800 }) + btn(86, 29, 36, "Scenes");
+    for (let i = 0; i < 18; i++) {
+      const x = 380 + i * 9 + (i > 1 ? 8 : 0);
+      s += i === 1 ? R(389, 34, 16, 5, K.blue, 2.5) : '<circle cx="' + x + '" cy="36.5" r="2.4" fill="' + (i < 1 ? "rgba(0,188,235,.5)" : "none") + '" stroke="' + K.ice + '" stroke-opacity=".45" stroke-width=".7"/>';
+    }
+    s += btn(560, 29, 30, "Notes") + btn(594, 29, 36, "Presenter");
+    // HUD stack
+    s += T(30, 108, "02 · THE SHIFT", { size: 6.8, fill: K.blue, weight: 600, ls: "1.4" }) +
+      T(28, 136, "Stories used to be decks.", { size: 22, weight: 800, ls: "-0.7" }) +
+      T(28, 162, "Now they are worlds.", { size: 22, weight: 800, ls: "-0.7", fill: gradText(u) }) +
+      T(30, 182, "Seven customer worlds, built with natural language.", { size: 7.6, fill: K.ink, op: ".88" });
+    [["A deck is a stack of rectangles", "done"], ["Customers want to step inside the story", "now"], ["Every click changes the world", "later"]].forEach((b, i) => {
+      const y = 194 + i * 22, now = b[1] === "now";
+      s += R(28, y, 196, 18, now ? "#0b2c48" : K.glass, 6, now ? "rgba(0,188,235,.75)" : K.line, now ? "" : ' fill-opacity=".6"') +
+        '<circle cx="38" cy="' + (y + 9) + '" r="2.6" fill="' + (now ? K.blue : b[1] === "done" ? K.green : K.faint) + '"/>' +
+        T(46, y + 11.5, b[0], { size: 6.8, fill: now ? K.ink : K.muted, op: b[1] === "later" ? ".55" : "1" });
+    });
+    s += T(30, 272, "02/18 · step 2/3", { size: 6, fill: K.muted, cls: "mono" });
+    // camera box with AI narrator
+    s += R(520, 248, 108, 84, "#071a30", 6, K.blue) + '<rect x="520" y="248" width="108" height="84" rx="6" fill="none" stroke="' + K.blue + '" stroke-opacity=".6" filter="url(#bl' + u + ')"/>';
+    for (let i = 0; i < 6; i++) s += '<line x1="522" y1="' + (300 + i * 6) + '" x2="626" y2="' + (300 + i * 6) + '" stroke="' + K.blue + '" stroke-opacity=".12"/>';
+    s += '<path d="M550,332 Q556,300 574,298 Q592,300 598,332 Z" fill="#0d274d" stroke="' + K.blue + '" stroke-opacity=".4"/>' +
+      '<path d="M566,300 L574,314 L582,300" fill="#e8f1fb" opacity=".85"/>' +
+      '<ellipse cx="574" cy="279" rx="13" ry="15" fill="#c98e6a"/><path d="M560,276 Q561,258 574,258 Q588,258 588,276 Q584,266 574,266 Q564,266 560,276 Z" fill="#2a1a12"/>' +
+      '<circle cx="569" cy="279" r="1.3" fill="#1a0f0a"/><circle cx="579" cy="279" r="1.3" fill="#1a0f0a"/><path d="M570,287 Q574,290 578,287" stroke="#7a3b2a" stroke-width="1.4" fill="none"/>' +
+      R(605, 252, 18, 11, K.blue, 3) + T(614, 260, "AI", { size: 6.5, anchor: "middle", weight: 800, fill: K.mid }) +
+      R(522, 320, 74, 11, K.mid, 0, null, ' fill-opacity=".85"') + R(522, 320, 2, 11, K.blue) + T(527, 328, "Ava · AI narrator", { size: 5.8, weight: 600 });
+    for (let i = 0; i < 8; i++) { const h = [3, 6, 9, 5, 8, 4, 7, 3][i]; s += R(600 + i * 3, 328 - h, 1.6, h, K.green, 0.8); }
+    // captions
+    s += R(110, 316, 340, 18, K.mid, 5, null, ' fill-opacity=".72"') +
+      '<text x="280" y="328" font-size="8" text-anchor="middle"><tspan fill="#e8f1fb">Seven worlds were built with </tspan><tspan fill="#9be7ff" font-weight="700">natural</tspan><tspan fill="#9fb3c8"> language, step by step.</tspan></text>';
+    // film bar
+    s += R(0, 344, 640, 56, "#030a15", 0, null, ' fill-opacity=".9"') + R(14, 350, 612, 3, "#13283f", 1.5) + R(14, 350, 168, 3, "url(#g" + u + ")", 1.5);
+    [14, 60, 118, 160, 230, 300, 360, 420, 470, 540, 600].forEach((x) => { s += R(x, 348, 1, 7, K.ice, 0, null, ' opacity=".45"'); });
+    s += '<circle cx="182" cy="351.5" r="4" fill="' + K.ice + '"/>';
+    s += btn(14, 362, 20, "⏮") + '<circle cx="50" cy="370" r="11" fill="' + K.blue + '"/><path d="M46,364 L56,370 L46,376 Z" fill="' + K.mid + '"/>' + btn(66, 362, 20, "⏭") + btn(90, 362, 20, "↻") +
+      T(118, 373, "04:12 / 17:08", { size: 7, cls: "mono", fill: K.muted }) + T(186, 373, "02 · The shift", { size: 7, fill: K.ink }) +
+      btn(380, 362, 22, "CC", "on") + btn(406, 362, 30, "Auto", "on") + btn(440, 362, 22, "1×") + btn(466, 362, 54, "Ava · neural") + btn(524, 362, 44, "Chapters") + btn(572, 362, 34, "Share") + btn(610, 362, 18, "⛶");
+    s += co(1, 476, 70) + co(2, 20, 100) + co(3, 512, 252) + co(4, 104, 320) + co(5, 628, 352) + co(6, 376, 28);
+    return frame("brisk-valley-7hw3.here.now/#2/1", s, u, extra);
+  }
+
+  /* C · Dominion sourced briefing */
+  function mockC(u) {
+    const hexW = 14, hexH = 12.12;
+    const hexPath = "M3.5,0 L10.5,0 L14,6.06 L10.5,12.12 L3.5,12.12 L0,6.06 Z";
+    const extra = '<pattern id="hx' + u + '" width="21" height="' + hexH + '" patternUnits="userSpaceOnUse" patternTransform="matrix(1 0 -0.55 0.62 0 0)">' +
+      '<path d="' + hexPath + '" fill="none" stroke="#00bceb" stroke-opacity=".35" stroke-width=".7"/><path transform="translate(10.5 6.06)" d="' + hexPath + '" fill="none" stroke="#00bceb" stroke-opacity=".35" stroke-width=".7"/></pattern>' +
+      '<pattern id="hxr' + u + '" width="21" height="' + hexH + '" patternUnits="userSpaceOnUse" patternTransform="matrix(1 0 -0.55 0.62 0 0)">' +
+      '<path d="' + hexPath + '" fill="#f25c9a" fill-opacity=".10" stroke="#f25c9a" stroke-opacity=".55" stroke-width=".7"/><path transform="translate(10.5 6.06)" d="' + hexPath + '" fill="#f25c9a" fill-opacity=".10" stroke="#f25c9a" stroke-opacity=".55" stroke-width=".7"/></pattern>' +
+      '<radialGradient id="core' + u + '" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#9be7ff"/><stop offset="1" stop-color="#00bceb" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="beam' + u + '" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9be7ff" stop-opacity=".9"/><stop offset="1" stop-color="#00bceb" stop-opacity="0"/></linearGradient>';
+    void hexW;
+    let s = R(0, 20, 640, 380, K.mid) + '<ellipse cx="430" cy="250" rx="260" ry="150" fill="#0b2a4a" opacity=".55" filter="url(#bl' + u + ')"/>';
+    s += R(196, 120, 444, 280, "url(#hx" + u + ")");
+    s += '<path d="M300,190 L360,170 L430,176 L480,196 L470,232 L430,262 L380,290 L330,300 L290,276 L276,236 Z" fill="url(#hxr' + u + ')"/>' +
+      '<path d="M300,190 L360,170 L430,176 L480,196 L470,232 L430,262 L380,290 L330,300 L290,276 L276,236 Z" fill="none" stroke="' + K.pink + '" stroke-opacity=".5"/>';
+    s += '<path d="M480,196 Q540,240 600,250" fill="none" stroke="' + K.ice + '" stroke-opacity=".35" stroke-dasharray="2 3"/>';
+    // agent halo
+    s += '<rect x="426" y="140" width="8" height="150" fill="url(#beam' + u + ')" opacity=".55"/>' +
+      '<ellipse cx="430" cy="132" rx="118" ry="30" fill="none" stroke="' + K.ice + '" stroke-opacity=".55"/>' +
+      '<ellipse cx="430" cy="132" rx="84" ry="20" fill="none" stroke="' + K.blue + '" stroke-opacity=".35"/>' +
+      '<circle cx="430" cy="132" r="22" fill="url(#core' + u + ')"/>';
+    [["Storm Surge Agent", 312, 130], ["CIP Evidence Agent", 330, 152], ["Vendor Compromise Agent", 296, 108], ["Large-Load Readiness Agent", 360, 96], ["Mission Assurance Agent", 470, 100], ["CVOW Weather-Window Agent", 452, 160]].forEach((a) => {
+      const w = a[0].length * 3.4 + 8;
+      s += R(a[1], a[2], w, 11, K.mid, 5.5, K.line, ' fill-opacity=".9"') + T(a[1] + 4, a[2] + 7.8, a[0], { size: 5.6 });
+    });
+    s += glass(512, 168, 120, 30, 6) + T(518, 179, "Cisco Cloud Control", { size: 6.5, weight: 700, fill: K.blue }) + T(518, 190, "AgenticOps · Agent Builder · AI Defense", { size: 5, fill: K.muted });
+    s += glass(500, 266, 132, 30, 6) + T(506, 277, "splunk>  Cisco Data Fabric", { size: 6.5, weight: 700, fill: K.pink }) + T(506, 288, "ES Premier · SOAR · ITSI · Edge Processor", { size: 5, fill: K.muted });
+    s += hot(398, 218, K.green, "Richmond HQ", "r", true) + hot(426, 196, K.blue, "Data Center Alley", "r") + hot(386, 200, K.amber, "North Anna", "l") +
+      hot(440, 244, K.blue, "Hampton Roads DoD", "r") + hot(330, 270, K.amber, "V.C. Summer", "l") + hot(472, 210, K.teal, "CVOW Offshore Wind", "r") + hot(360, 250, K.violet, "Customer Ops", "l");
+    s += '<rect x="404" y="314" width="8" height="70" fill="url(#beam' + u + ')" opacity=".7" transform="rotate(8 408 350)"/>';
+    // topbar and nav
+    s += R(0, 20, 640, 24, "#030a15", 0, null, ' fill-opacity=".92"') + mark(10, 25, 0.62) + T(36, 31, "splunk>", { size: 7, weight: 800, fill: K.pink }) + T(36, 39, "a Cisco company", { size: 4.6, fill: K.muted }) +
+      '<line x1="86" y1="25" x2="86" y2="40" stroke="' + K.line + '"/>' + T(92, 31, "Dominion Energy", { size: 6.6, weight: 700 }) + T(92, 39, "IT leadership briefing", { size: 4.8, fill: K.muted });
+    let nx = 214;
+    ["Digital Twin", "IT Leadership", "Work Together", "Story", "Alignment", "Threats", "Dashboards", "Cloud Control", "Federal", "Roadmap", "Sources"].forEach((l, i) => {
+      s += T(nx, 35, l, { size: 5.6, fill: i === 0 ? K.ice : K.muted, weight: i === 0 ? 600 : 400 }); nx += l.length * 3 + 9.5;
+    });
+    // layer toggles
+    s += btn(474, 50, 38, "All layers", "primary", 14) + btn(515, 50, 40, "Operations", null, 14) + btn(558, 50, 34, "+ Splunk", null, 14) + btn(595, 50, 38, "+ Cloud Ctl", null, 14) + btn(578, 67, 55, "Simulate attacks", null, 14);
+    // left column
+    s += T(12, 58, "PREPARED FOR DOMINION ENERGY IT LEADERSHIP, OCTOBER 2026", { size: 4.8, fill: K.blue, weight: 600, ls: ".6" }) +
+      T(11, 78, "Dominion Energy,", { size: 15.5, weight: 800, ls: "-0.5" }) +
+      T(11, 95, "operated by agents,", { size: 15.5, weight: 800, ls: "-0.5", fill: gradText(u) }) +
+      T(11, 112, "grounded in one", { size: 15.5, weight: 800, ls: "-0.5", fill: gradText(u) }) +
+      T(11, 129, "data fabric", { size: 15.5, weight: 800, ls: "-0.5", fill: gradText(u) }) +
+      T(12, 143, "A 3D view of your critical business functions, the", { size: 5.7, fill: K.muted }) +
+      T(12, 151, "Splunk platform beneath them, and Cloud Control above.", { size: 5.7, fill: K.muted }) +
+      glass(12, 157, 128, 16, 5) + T(18, 168, "Listen to the security briefing · 5 min", { size: 5.6, weight: 600 });
+    [["$65B", "2026 to 2030 capital plan", "1 2"], ["53.8 GW", "Data center capacity in contracting", "3 4"], ["3.6M", "Electric customers (VA, NC, SC)", "54"], ["81%", "CVOW complete (2.6 GW)", "10"], ["2H 2027", "Expected close: NextEra", "7"], ["10/1/2028", "NERC CIP-015 INSM effective", "29"]].forEach((k, i) => {
+      const x = 12 + (i % 3) * 62, y = 180 + Math.floor(i / 3) * 34;
+      s += glass(x, y, 59, 31, 5) + T(x + 5, y + 12, k[0], { size: 8.5, weight: 800 }) + T(x + 5, y + 20.5, k[1].slice(0, 22), { size: 4.3, fill: K.muted }) +
+        T(x + 5, y + 27, k[1].slice(22), { size: 4.3, fill: K.muted }) + T(x + 54, y + 9, k[2], { size: 4.5, fill: K.blue, anchor: "end", cls: "mono" });
+    });
+    s += glass(12, 266, 186, 124, 9) + T(20, 279, "PROLOGUE", { size: 5.6, fill: K.blue, weight: 600, ls: "1" }) + T(190, 279, "1 / 10", { size: 5.6, fill: K.muted, anchor: "end", cls: "mono" }) +
+      T(20, 293, "One territory. Every critical function.", { size: 7.6, weight: 700 }) +
+      R(20, 300, 168, 3, K.line, 1.5) + R(20, 307, 160, 3, K.line, 1.5) + R(20, 314, 170, 3, K.line, 1.5) + R(20, 321, 120, 3, K.line, 1.5) +
+      R(20, 330, 170, 16, "#030a15", 8, K.line) + T(28, 341, "Audio briefing", { size: 5.8, weight: 600 }) + R(80, 337, 70, 2, "#13283f") + R(80, 337, 22, 2, K.blue) + T(156, 341, "5:40", { size: 5.4, fill: K.muted, cls: "mono" }) + tag(170, 333, "MP3", "pub") +
+      btn(20, 354, 18, "←") + btn(42, 354, 54, "Play story", "primary") + btn(100, 354, 18, "→");
+    for (let i = 0; i < 10; i++) s += '<circle cx="' + (128 + i * 6) + '" cy="362" r="1.7" fill="' + (i === 0 ? K.blue : K.faint) + '"/>';
+    s += T(20, 383, "Scroll for the full brief ↓", { size: 5.6, fill: K.muted });
+    // legend
+    s += glass(410, 374, 222, 18, 5);
+    [["Territory", K.pink], ["Transmission", K.ice], ["Splunk ingest", K.pink], ["Agent actions", K.blue], ["Threat path", K.red]].forEach((l, i) => {
+      const x = 416 + i * 43;
+      s += R(x, 382, 8, 2, l[1]) + T(x + 10, 385, l[0], { size: 4.8, fill: K.muted });
+    });
+    s += co(1, 196, 184) + co(2, 196, 270) + co(3, 466, 52) + co(4, 548, 132) + co(5, 628, 270) + co(6, 208, 28);
+    return frame("hollow-flame-f2tf.here.now", s, u, extra);
+  }
+
+  /* D · MetLife 4D AgenticOps */
+  function mockD(u) {
+    const extra = '<radialGradient id="glb' + u + '" cx="42%" cy="34%" r="70%"><stop offset="0" stop-color="#14456e"/><stop offset=".6" stop-color="#0a2645"/><stop offset="1" stop-color="#050e1d"/></radialGradient>' +
+      '<radialGradient id="spc' + u + '" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#0c2a4c"/><stop offset="1" stop-color="#050e1d"/></radialGradient>' +
+      '<clipPath id="gc' + u + '"><circle cx="320" cy="222" r="168"/></clipPath>';
+    let s = R(0, 20, 640, 380, "url(#spc" + u + ")") + stars(180, 23, 0, 22, 640, 378, K.ice, 0.8);
+    s += '<circle cx="320" cy="222" r="176" fill="' + K.blue + '" opacity=".14" filter="url(#bl' + u + ')"/><circle cx="320" cy="222" r="168" fill="url(#glb' + u + ')"/>';
+    let g = "";
+    const r = rnd(31);
+    for (let i = 0; i < 520; i++) {
+      const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 168, x = 320 + Math.cos(a) * d, y = 222 + Math.sin(a) * d * 0.98;
+      const land = Math.sin(x * 0.035) + Math.cos(y * 0.045 + x * 0.01) > 0.5;
+      if (land) g += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r=".9" fill="' + K.ice + '" opacity=".35"/>';
+    }
+    [50, 100, 145].forEach((rx) => { g += '<ellipse cx="320" cy="222" rx="' + rx + '" ry="168" fill="none" stroke="' + K.ice + '" stroke-opacity=".08"/>'; });
+    [-110, -55, 0, 55, 110].forEach((dy) => { const w = Math.sqrt(168 * 168 - dy * dy); g += '<ellipse cx="320" cy="' + (222 + dy) + '" rx="' + w.toFixed(1) + '" ry="' + (w * 0.16).toFixed(1) + '" fill="none" stroke="' + K.ice + '" stroke-opacity=".08"/>'; });
+    s += '<g clip-path="url(#gc' + u + ')">' + g + "</g>";
+    s += '<ellipse cx="320" cy="222" rx="262" ry="70" fill="none" stroke="' + K.ice + '" stroke-opacity=".22" transform="rotate(-14 320 222)"/>' +
+      '<ellipse cx="320" cy="222" rx="236" ry="96" fill="none" stroke="' + K.blue + '" stroke-opacity=".18" transform="rotate(12 320 222)"/>' +
+      '<circle cx="78" cy="268" r="2.4" fill="' + K.ice + '"/><circle cx="548" cy="146" r="2.4" fill="' + K.green + '"/>';
+    [[214, 120, "New York"], [252, 158, "Cary, NC"], [430, 120, "London"], [462, 150, "Warsaw"], [500, 196, "Dubai"], [236, 284, "Sao Paulo"]].forEach((c) => {
+      s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="5" fill="' + K.blue + '" opacity=".2"/><circle cx="' + c[0] + '" cy="' + c[1] + '" r="1.8" fill="' + K.ice + '"/>' + T(c[0] + 5, c[1] - 4, c[2], { size: 5.2, fill: K.ice, op: ".55" });
+    });
+    s += R(0, 20, 640, 380, K.mid, 0, null, ' fill-opacity=".38"');
+    // top controls
+    s += mark(12, 28, 0.7) + T(42, 38, "MetLife x Cisco Cloud Control", { size: 6.8, weight: 700 }) +
+      glass(420, 27, 68, 16, 5) + T(426, 37.5, "Mission clock", { size: 5.4, fill: K.muted }) + T(482, 37.5, "T-00:00", { size: 6, fill: K.ice, anchor: "end", cls: "mono" }) +
+      R(492, 27, 140, 16, K.glass, 5, K.line) + T(516, 37.5, "Traditional IT", { size: 5.8, fill: K.muted, anchor: "middle" }) + R(538, 28.5, 40, 13, "#0b3550", 4, "rgba(0,188,235,.7)") + T(558, 37.5, "Compare", { size: 5.8, anchor: "middle", weight: 600 }) + T(605, 37.5, "AgenticOps", { size: 5.8, fill: K.muted, anchor: "middle" }) +
+      btn(560, 47, 72, "Show 4D timeline", null, 14);
+    // hero
+    s += T(320, 106, "METLIFE  X  CISCO CLOUD CONTROL", { size: 6.6, fill: K.ice, weight: 600, anchor: "middle", ls: "2.4" }) +
+      T(320, 134, "See it before it becomes", { size: 23, weight: 800, anchor: "middle", ls: "-0.7" }) +
+      T(320, 160, "the business problem.", { size: 23, weight: 800, anchor: "middle", ls: "-0.7", fill: gradText(u) }) +
+      T(320, 178, "A four-dimensional, mission-based walkthrough of how AgenticOps, the Splunk-powered", { size: 6.6, fill: K.muted, anchor: "middle" }) +
+      T(320, 187, "Cisco Data Fabric and Cisco Cloud Control act on weak signals hours or days early.", { size: 6.6, fill: K.muted, anchor: "middle" });
+    [["PRESENT", "Executive Tour", "Cinematic, fully narrated journey", "across all 10 missions."], ["PLAY", "Explore Missions", "Pick a location, make the call at", "each decision point."], ["LEARN", "Account Team Academy", "Trace each IT signal to a KPI,", "practice discovery, take the quiz."]].forEach((d, i) => {
+      const x = 104 + i * 147, on = i === 1;
+      s += R(x, 198, 138, 56, on ? "#0b2c48" : K.glass, 8, on ? "rgba(0,188,235,.75)" : K.line, ' fill-opacity=".9"') +
+        T(x + 9, 210, d[0], { size: 5.4, fill: K.blue, weight: 600, ls: "1.2" }) + T(x + 9, 223, d[1], { size: 8.6, weight: 800 }) +
+        T(x + 9, 235, d[2], { size: 5.6, fill: K.muted }) + T(x + 9, 243, d[3], { size: 5.6, fill: K.muted });
+    });
+    s += T(320, 268, "Illustrative scenarios built from public information and common insurance industry challenges.", { size: 5.3, fill: K.faint, anchor: "middle" }) +
+      T(320, 276, "No internal data is used. Dollar figures are modeled estimates from industry benchmarks, for discussion only.", { size: 5.3, fill: K.faint, anchor: "middle" }) +
+      T(320, 288, "Best with sound on. Studio neural narration: pause, skip and change voices from the dock.", { size: 5.5, fill: K.ice, anchor: "middle", op: ".8" });
+    // ticker
+    s += R(0, 300, 640, 16, "#030a15", 0, null, ' fill-opacity=".85"') + '<line x1="0" y1="300" x2="640" y2="300" stroke="' + K.line + '"/><line x1="0" y1="316" x2="640" y2="316" stroke="' + K.line + '"/>' +
+      '<circle cx="12" cy="308" r="2.4" fill="' + K.green + '"/>' +
+      T(20, 310.5, "Warsaw | Splunk ITSI predicted disk exhaustion on a policy database 6 days out. Ticket auto-created.     Tampa | Claims intake auto-scaled ahead of a severe-weather watch.     Paris | Hypershield applied a compensating control", { size: 5.8, fill: K.muted });
+    // 4D timeline preview
+    s += glass(16, 322, 300, 24, 6) + T(24, 332, "AgenticOps", { size: 5.5, fill: K.green, weight: 600 }) + T(24, 341, "Traditional IT", { size: 5.5, fill: "#ff7b6e", weight: 600 }) +
+      R(72, 328, 236, 5, "#13283f", 2.5) + R(120, 328, 34, 5, K.green, 2.5) + R(72, 337, 236, 5, "#13283f", 2.5) + R(120, 337, 160, 5, K.red, 2.5, null, ' opacity=".8"') +
+      '<line x1="290" y1="325" x2="290" y2="345" stroke="' + K.amber + '" stroke-dasharray="2 2"/>' + '<line x1="160" y1="324" x2="160" y2="346" stroke="' + K.ice + '"/><circle cx="160" cy="324" r="2.5" fill="' + K.ice + '"/>' +
+      glass(324, 322, 140, 24, 6) + T(330, 332, "Business value protected", { size: 5.2, fill: K.muted }) + T(330, 342, "$4.1M", { size: 8, weight: 800, fill: K.green }) + tag(372, 334, "MODELED ESTIMATE", "mod");
+    // narration dock
+    s += glass(120, 354, 400, 38, 10) + '<circle cx="140" cy="373" r="10" fill="' + K.blue + '" opacity=".25"/><circle cx="140" cy="373" r="6" fill="' + K.ice + '" opacity=".8"/>' +
+      T(156, 370, "Heart", { size: 7.2, weight: 700 }) + T(156, 380, "Studio neural voice · AI", { size: 5.4, fill: K.muted }) +
+      btn(234, 365, 20, "⏮") + '<circle cx="268" cy="373" r="10" fill="' + K.blue + '"/><path d="M264,367 L274,373 L264,379 Z" fill="' + K.mid + '"/>' + btn(282, 365, 20, "⏭") +
+      btn(310, 365, 34, "Section") + btn(348, 365, 22, "1×") + btn(374, 365, 22, "CC", "on") + btn(400, 365, 44, "Voice ▾") + btn(448, 365, 64, "Ambient music");
+    s += co(1, 96, 206) + co(2, 416, 30) + co(3, 196, 108) + co(4, 630, 304) + co(5, 116, 358) + co(6, 470, 326);
+    return frame("rosy-beacon-q5c8.here.now", s, u, extra);
+  }
+
+  /* A · Moonshot open brief */
+  function mockMoon(u) {
+    const extra = '<radialGradient id="neb' + u + '" cx="68%" cy="46%" r="58%"><stop offset="0" stop-color="#1b3f73"/><stop offset=".5" stop-color="#0b1f3d"/><stop offset="1" stop-color="#050e1d"/></radialGradient>' +
+      '<radialGradient id="cr' + u + '" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffffff"/><stop offset=".28" stop-color="#9be7ff"/><stop offset=".6" stop-color="#00bceb" stop-opacity=".35"/><stop offset="1" stop-color="#00bceb" stop-opacity="0"/></radialGradient>';
+    const cx = 452, cy = 186;
+    let s = R(0, 20, 640, 380, "url(#neb" + u + ")") + stars(220, 41, 0, 22, 640, 378, K.ice, 0.9);
+    s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="170" ry="70" fill="none" stroke="' + K.ice + '" stroke-opacity=".25" transform="rotate(-12 ' + cx + " " + cy + ')"/>' +
+      '<ellipse cx="' + cx + '" cy="' + cy + '" rx="130" ry="96" fill="none" stroke="' + K.blue + '" stroke-opacity=".22" transform="rotate(24 ' + cx + " " + cy + ')"/>' +
+      '<ellipse cx="' + cx + '" cy="' + cy + '" rx="92" ry="34" fill="none" stroke="' + K.green + '" stroke-opacity=".25"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="70" fill="url(#cr' + u + ')"/>' +
+      T(cx, cy + 6, "?", { size: 26, weight: 800, anchor: "middle", fill: K.mid, op: ".75" }) +
+      T(cx, cy + 50, "THE MODEL'S CALL", { size: 6.4, weight: 600, anchor: "middle", fill: K.ice, ls: "1.6" });
+    [[cx - 168, cy - 92, "B", "Scenario walkthrough", K.amber], [cx + 84, cy - 110, "C", "Narrated stage talk", K.blue], [cx + 104, cy + 18, "D", "Sourced briefing", K.pink], [cx - 182, cy + 34, "E", "4D AgenticOps", K.green]].forEach((t) => {
+      s += '<line x1="' + (t[0] + 38) + '" y1="' + (t[1] + 22) + '" x2="' + cx + '" y2="' + cy + '" stroke="' + t[4] + '" stroke-opacity=".3" stroke-dasharray="2 3"/>' +
+        glass(t[0], t[1], 78, 44, 6) + R(t[0] + 5, t[1] + 5, 68, 22, "#030a15", 3) +
+        '<circle cx="' + (t[0] + 50) + '" cy="' + (t[1] + 16) + '" r="6" fill="' + t[4] + '" opacity=".55"/>' + R(t[0] + 9, t[1] + 10, 26, 3, K.ink, 1.5, null, ' opacity=".7"') + R(t[0] + 9, t[1] + 16, 18, 3, t[4], 1.5) +
+        T(t[0] + 6, t[1] + 38, t[2] + " · " + t[3], { size: 5.8, fill: K.muted });
+    });
+    s += glass(270, 300, 150, 56, 8) + T(279, 313, "DEEP RESEARCH", { size: 5.8, fill: K.blue, weight: 600, ls: "1.2" }) +
+      T(279, 326, "Filings · earnings calls · outages", { size: 6, fill: K.ink }) + T(279, 336, "regulators · locations · leadership", { size: 6, fill: K.ink }) +
+      T(279, 349, "Every customer fact cited", { size: 5.8, fill: K.green });
+    s += glass(428, 290, 202, 100, 8) + T(437, 303, "WORLD-CLASS RUBRIC", { size: 5.8, fill: K.blue, weight: 600, ls: "1.2" }) + tag(560, 295, "ILLUSTRATIVE", "mod");
+    [["Design quality", 0.9], ["Originality", 0.8], ["Accuracy and sources", 0.9], ["Craft and function", 0.85]].forEach((r, i) => {
+      const y = 314 + i * 13;
+      s += T(437, y + 5, r[0], { size: 5.8, fill: K.muted }) + R(518, y, 90, 5, "#13283f", 2.5) + R(518, y, 90 * r[1], 5, "url(#g" + u + ")", 2.5) + T(622, y + 5.5, String(Math.round(r[1] * 10)), { size: 6, anchor: "end", cls: "mono" });
+    });
+    s += T(437, 382, "Round 3 · weakest: phone layout · fixing", { size: 5.6, fill: K.amber });
+    // prompt card
+    s += glass(14, 36, 240, 354, 10) + mark(24, 46, 0.6) + T(50, 57, "STYLE A · MOONSHOT", { size: 6, fill: K.blue, weight: 600, ls: "1.4" }) +
+      T(24, 82, "One brief.", { size: 17, weight: 800, ls: "-0.5" }) + T(24, 101, "Total creative freedom.", { size: 17, weight: 800, ls: "-0.5", fill: gradText(u) });
+    [["Customer", "Your customer"], ["Focus", "The direction you want"], ["Audience", "Who will be in the room"]].forEach((f, i) => {
+      const y = 116 + i * 30;
+      s += T(24, y + 6, f[0], { size: 6.2, weight: 600 }) + R(24, y + 10, 220, 15, K.field || "#030c1a", 4, K.line) + T(30, y + 20.5, f[1], { size: 6.4, fill: K.ink });
+    });
+    s += T(24, 214, "Context only you can give", { size: 6.2, weight: 600 }) + T(150, 214, "OPTIONAL", { size: 5.2, fill: K.faint, cls: "mono" }) + R(24, 218, 220, 22, "#030c1a", 4, K.line) + T(30, 231, "Empty: public sources only", { size: 6, fill: K.faint });
+    s += R(24, 250, 9, 9, K.blue, 2) + T(28.5, 257.5, "✓", { size: 7, anchor: "middle", fill: K.mid, weight: 800 }) + T(38, 257.5, "One-shot: ask me no questions", { size: 6.6, weight: 600 }) +
+      T(24, 276, "Time budget", { size: 6.2, weight: 600 }) + R(84, 267, 60, 14, "#030c1a", 4, K.line) + T(90, 277, "2 hours  ▾", { size: 6.4 }) +
+      T(24, 296, "Personas", { size: 6.2, weight: 600 }) + '<circle cx="88" cy="294" r="3.5" fill="none" stroke="' + K.blue + '"/><circle cx="88" cy="294" r="1.8" fill="' + K.blue + '"/>' + T(95, 296.5, "Wide range for this audience", { size: 6.2 }) +
+      '<line x1="24" y1="308" x2="244" y2="308" stroke="' + K.line + '"/>' +
+      T(24, 324, "Create a masterpiece.", { size: 10, weight: 800, fill: gradText(u) }) +
+      T(24, 336, "The model decides what a masterpiece is. Examples optional.", { size: 5.6, fill: K.muted }) +
+      btn(24, 350, 90, "Copy prompt", "primary", 18) + T(122, 362, "No storyboard stop: it builds", { size: 5.6, fill: K.faint });
+    s += co(1, 250, 124) + co(2, 250, 254) + co(3, 154, 272) + co(4, 424, 300) + co(5, 626, 292) + co(6, 452, 120);
+    return frame("your-next-build.here.now", s, u, extra);
+  }
+
+  /* F · Live operations twin */
+  function mockF(u) {
+    const extra = '<linearGradient id="gnd' + u + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d2236"/><stop offset="1" stop-color="#07131f"/></linearGradient>';
+    let s = R(0, 20, 640, 380, "url(#gnd" + u + ")");
+    // top bar
+    s += R(0, 20, 640, 22, "#030a15") + mark(8, 24, 0.6) + T(34, 34, "Operations Twin", { size: 7.2, weight: 700 }) + T(100, 34, "09:00 · Clear", { size: 6, fill: K.muted, cls: "mono" });
+    let bx = 300; ["Command", "AI", "Splunk", "Systems", "Cisco", "Explore", "Journeys", "Focus", "Night", "Sources"].forEach((l) => { const w = l.length * 3.6 + 10; s += R(bx, 25, w, 12, l === "Journeys" ? "#3a1430" : K.glass, 3, l === "Journeys" ? K.pink : K.line) + T(bx + w / 2, 33.5, l, { size: 5.4, anchor: "middle" }); bx += w + 3; });
+    // lens bar
+    s += R(0, 42, 640, 18, "#05101c");
+    let lx = 8; [["Leadership", K.pink], ["Operations", K.violet], ["Clinical", K.green], ["Network & Sec", K.blue], ["Facilities", K.amber], ["Safety", "#ff6b4a"], ["Customers", K.sky]].forEach((l, i) => { const w = l[0].length * 4 + 18; s += R(lx, 45, w, 12, i === 1 ? "#1d1640" : "transparent", 3, i === 1 ? l[1] : K.line) + '<circle cx="' + (lx + 6) + '" cy="51" r="2.2" fill="' + l[1] + '"/>' + T(lx + 11, 53.5, l[0], { size: 5.6 }); lx += w + 4; });
+    // left panel
+    s += glass(6, 64, 132, 300, 6) + T(12, 76, "OPERATIONS LENS", { size: 5.2, fill: K.violet, weight: 600, ls: ".8" }) + T(12, 86, "Scenarios 17 · Dashboard · People", { size: 5.4, fill: K.muted });
+    [["Surge & bed boarding", "17 min", "64 min"], ["Blizzard, skeleton crew", "19 h ahead", "at shift change"], ["Equipment hunt", "6 min", "27 min"], ["Network slowdown", "4 min", "2 h"], ["Ransomware on a kiosk", "contained", "spread"]].forEach((c, i) => {
+      const y = 94 + i * 52;
+      s += R(12, y, 120, 46, "#030c1a", 4, K.line) + T(17, y + 10, ["HOSPITAL OPS", "WEATHER", "CLINICAL OPS", "NETWORK OPS", "SECURITY"][i], { size: 4.8, fill: K.faint, cls: "mono" }) +
+        T(17, y + 20, c[0], { size: 6.2, weight: 700 }) + R(17, y + 25, 100, 2.5, K.line, 1) + R(17, y + 30, 80, 2.5, K.line, 1) +
+        T(17, y + 41, c[1], { size: 5.6, fill: K.green, weight: 600 }) + T(17 + c[1].length * 3.2 + 6, y + 41, "vs " + c[2], { size: 5.6, fill: "#ff7b6e" });
+    });
+    // 3D campus
+    const iso = (x, y, w, d, h, top) => { const P = (a) => '<polygon points="' + a.map((q) => q.join(",")).join(" ") + '"'; return P([[x, y], [x + w, y + w / 2], [x + w, y + w / 2 - h], [x, y - h]]) + ' fill="#1d3a50"/>' + P([[x + w, y + w / 2], [x + w + d, y + w / 2 - d / 2], [x + w + d, y + w / 2 - d / 2 - h], [x + w, y + w / 2 - h]]) + ' fill="#2a557a"/>' + P([[x, y - h], [x + w, y + w / 2 - h], [x + w + d, y + w / 2 - d / 2 - h], [x + d, y - d / 2 - h]]) + ' fill="' + (top || "#4c87b4") + '"/>'; };
+    s += '<polygon points="150,250 330,340 500,255 320,170" fill="#0f2b3f" stroke="' + K.planeLine + '"/>';
+    for (let i = 1; i < 8; i++) { s += '<line x1="' + (150 + i * 22.5) + '" y1="' + (250 + i * 11.25) + '" x2="' + (320 + i * 22.5) + '" y2="' + (170 + i * 10.6) + '" stroke="' + K.planeLine + '" stroke-width=".5"/>'; }
+    s += iso(210, 250, 34, 30, 70, "#5b9bd0") + iso(268, 232, 40, 34, 108, "#6aaee0") + iso(330, 262, 30, 26, 52) + iso(380, 230, 34, 30, 84) + iso(250, 296, 22, 20, 28) + iso(420, 270, 26, 22, 36);
+    for (let i = 0; i < 26; i++) { const t = i / 26; s += '<circle cx="' + (175 + t * 300).toFixed(1) + '" cy="' + (262 + Math.sin(i * 1.7) * 30).toFixed(1) + '" r="1.4" fill="' + [K.ice, K.green, K.amber][i % 3] + '"/>'; }
+    // floating layers
+    s += '<ellipse cx="320" cy="118" rx="130" ry="20" fill="' + K.pink + '" fill-opacity=".12" stroke="' + K.pink + '" stroke-opacity=".6"/>' + R(268, 110, 104, 15, "#2a0e1f", 4, K.pink) + T(320, 120, "DATA LAYER · every signal", { size: 5.8, anchor: "middle", weight: 700, fill: "#ff9ccc" }) +
+      '<ellipse cx="320" cy="84" rx="92" ry="13" fill="' + K.blue + '" fill-opacity=".12" stroke="' + K.blue + '" stroke-opacity=".6"/>' + R(270, 77, 100, 14, "#062638", 4, K.blue) + T(320, 86.5, "OPERATIONS · AI Canvas", { size: 5.8, anchor: "middle", weight: 700, fill: K.ice });
+    [210, 290, 360, 420].forEach((x) => { s += '<line x1="' + x + '" y1="210" x2="' + (x * 0.6 + 128) + '" y2="132" stroke="' + K.blue + '" stroke-opacity=".45" stroke-dasharray="2 3"/>'; });
+    s += R(142, 64, 214, 13, K.glass, 4, K.line) + T(148, 73, "Spaces data · AI map · Data flows · Labels · Wayfinding", { size: 5.4 });
+    s += R(400, 210, 70, 13, K.mid, 6, K.line) + T(405, 219, "Main Hospital", { size: 5.8 }) + R(210, 160, 62, 13, K.mid, 6, K.line) + T(215, 169, "Research Tower", { size: 5.8 });
+    // right inspector
+    s += glass(502, 64, 132, 300, 6) + T(508, 76, "INSPECTOR", { size: 5.2, fill: K.blue, weight: 600, ls: ".8" }) + T(508, 88, "Main Hospital", { size: 7.4, weight: 700 });
+    [["Census", "412"], ["Room wait", "38 min"], ["Wi-Fi clients", "18.7k"], ["AI tokens/min", "55k"]].forEach((k, i) => { const x = 508 + (i % 2) * 62, y = 94 + Math.floor(i / 2) * 36; s += R(x, y, 58, 32, "#030c1a", 4, K.line) + T(x + 4, y + 9, k[0], { size: 5, fill: K.muted }) + T(x + 4, y + 21, k[1], { size: 8, weight: 800 }) + '<polyline points="' + [0, 1, 2, 3, 4, 5, 6].map((j) => (x + 4 + j * 8) + "," + (y + 28 - ((j * 7 + i * 3) % 6))).join(" ") + '" fill="none" stroke="' + K.green + '" stroke-width=".8"/>'; });
+    s += T(508, 178, "PEOPLE HERE", { size: 5.2, fill: K.muted, ls: ".8" });
+    ["Charge nurse · night", "Respiratory therapist", "Patient · Floor 15"].forEach((n, i) => { s += '<circle cx="514" cy="' + (190 + i * 16) + '" r="5" fill="' + [K.green, K.amber, K.sky][i] + '" opacity=".6"/>' + T(523, 192.5 + i * 16, n, { size: 5.8 }); });
+    s += R(508, 240, 120, 54, "#1a0f25", 5, K.pink) + T(514, 252, "JOURNEY · Maria, surgery day", { size: 5.6, weight: 700 }) + btn(514, 260, 50, "With Cisco", "primary", 13) + btn(568, 260, 54, "Without Cisco", null, 13) + btn(514, 276, 50, "Compare", null, 13);
+    // bottom player
+    s += R(0, 368, 640, 32, "#030a15");
+    ["⏸", "1×", "10×", "60×", "300×", "LIVE"].forEach((l, i) => { s += btn(8 + i * 24, 376, 21, l, i === 1 ? "on" : null, 14); });
+    for (let i = 0; i < 60; i++) { const h = 3 + Math.abs(Math.sin(i * 0.35)) * 12; s += R(160 + i * 3.2, 392 - h, 2, h, i > 40 && i < 47 ? K.red : "#3d6b92", 0.5); }
+    s += '<line x1="300" y1="374" x2="300" y2="394" stroke="' + K.ice + '"/>';
+    s += R(360, 375, 130, 15, K.glass, 4, K.line) + T(366, 385, "Scenario: ice storm · de-icing surge ▾", { size: 5.6 }) + R(494, 375, 66, 15, "#0f2a16", 4, K.green) + T(527, 385, "Cisco remediation: ON", { size: 5.2, anchor: "middle", fill: K.green, weight: 600 }) + btn(564, 375, 70, "Customer journey", "primary", 15);
+    s += co(1, 300, 46) + co(2, 140, 98) + co(3, 450, 120) + co(4, 630, 70) + co(5, 352, 372) + co(6, 630, 246);
+    return frame("your-operations-twin.here.now", s, u, extra);
+  }
+
+  const MOCKS = { A: mockMoon, B: mockA, C: mockB, D: mockC, E: mockD, F: mockF };
+  const CALLOUTS = {
+    A: ["Three inputs: customer, focus, audience. Private context and specific personas are optional.",
+        "One-shot, on by default: the model asks no questions, makes assumptions, and documents them.",
+        "A time budget sets the scope: how much to research, build and polish.",
+        "Deep research on public sources first; anything not public comes from you or is labeled modeled.",
+        "Create a masterpiece: the model decides what that means, unless you add your own examples.",
+        "The format is the model's call; styles B to E are inspiration, not templates."],
+    B: ["Persona rail with Personas, Technology, Scenarios and Places tabs; every persona tagged PUBLIC or MODELED.",
+        "Without Cisco, With Cisco and Split view switch the whole world, not just the text.",
+        "Schematic corridors and site hotspots on OVERLAY labels; the impact zone pulses red.",
+        "Guided story bar with Play story, step dots, and arrow keys; Explore freely opens orbit and zoom.",
+        "Sources and Assumptions panels one click away, with the PUBLIC / MODELED / ILLUSTRATIVE legend.",
+        "Each scenario told twice in paired steps, with a modeled outcome KPI labeled on the card."],
+    C: ["Every scene is its own lit 3D world: sky shader, horizon grid, particles, and the bridge-bar hero mark.",
+        "Stack HUD: numbered eyebrow, two-clause headline with the gradient outcome, beats marked done, now, later.",
+        "Camera box with the animated AI narrator, badged AI, with a live level meter.",
+        "Captions highlight each word as it is spoken.",
+        "Film bar: play, step, replay, timeline with scene ticks, CC, auto-advance, speed, voice, chapters, share to the moment.",
+        "3px gradient progress bar and scene dots; every URL is a deep link to #scene/step."],
+    D: ["KPI grid of headline public figures, each with numbered source links.",
+        "Story card for a 10 act walk with an audio briefing and MP3, plus Play story.",
+        "Layer toggles, including Simulate attacks, fade whole layers of the twin.",
+        "Cloud Control agent halo above the territory, each agent named for a customer job.",
+        "The Splunk data fabric layer, shown as what the customer already runs.",
+        "Anchor nav into the long scrolling brief: leadership, alignment, threats, dashboards, roadmap, sources."],
+    F: ["Persona lenses across the top reframe the whole twin for each role.",
+        "Scenario library by category, each card with a before-and-after KPI.",
+        "A living 3D site with the data layer and operations layer floating above it, and toggleable data layers.",
+        "Inspector and live KPIs for whatever you click: a building, a person, a system.",
+        "Time player: speed controls, a time-travel strip, a disruption picker and a Cisco remediation switch.",
+        "Narrated journeys told With Cisco, Without Cisco, or side by side, plus a guided tour on landing."],
+    E: ["Three doors: Present (narrated tour), Play (make the call), Learn (account team academy).",
+        "Mission clock and the Traditional IT, Compare, AgenticOps toggle for the same mission.",
+        "Globe hotspots fly the camera down to building and floor.",
+        "A live ticker of agent actions by city, written as plain outcomes.",
+        "Narration dock with sentence and section controls, voices, speed, captions, ambient music.",
+        "Business value protected, labeled modeled estimate on every card."]
+  };
+  const BEST = {
+    A: "When you want the model's best idea, not a recreation: give it the context and the room to explore.",
+    B: "Executives who need to feel one site and compare outcomes side by side.",
+    C: "Presenting your own method, or a story you will talk over live, with a film for people who missed it.",
+    D: "IT leadership that needs evidence, a current estate story, and a sequenced next step.",
+    E: "Showing weak signals caught early, in business terms, with a playable decision.",
+    F: "Operations and IT leaders who want to see their whole site live, inject a bad day, and watch the difference."
+  };
+  function mockHTML(code) {
+    uidN += 1;
+    return '<div class="mock" role="img" aria-label="Mock-up of style ' + code + ", " + esc(STYLES[code].name) + ', rebuilt from ' + esc(STYLES[code].refName) + '">' + MOCKS[code]("_" + code + uidN) + "</div>";
+  }
+  function calloutHTML(code) {
+    return '<ol class="callouts">' + CALLOUTS[code].map((t, i) => '<li><span class="n">' + (i + 1) + "</span><span>" + esc(t) + "</span></li>").join("") + "</ol>";
+  }
+  function renderGallery() {
+    $("gallery").innerHTML = Object.keys(STYLES).map((k) =>
+      '<figure class="preset' + (k === "A" ? " featured" : "") + '" data-style="' + k + '">' + mockHTML(k) +
+      '<figcaption><div class="ttl"><strong>Style ' + k + " · " + esc(STYLES[k].name) + "</strong>" +
+      '<button type="button" data-use="' + k + '" aria-pressed="false">Use style ' + k + "</button></div>" +
+      '<p class="best">' + esc(BEST[k]) + "</p>" +
+      '<p class="skilluse"><b>With the skill.</b> ' + esc(STYLES[k].skillShort) + "</p>" +
+      calloutHTML(k) +
+      '<div class="ref"><span class="live-dot" aria-hidden="true"></span><span>' + (k === "A" ? "Framework source: " : "Reference build: ") + esc(STYLES[k].refName) + '</span><a href="' + esc(STYLES[k].ref) + '" target="_blank" rel="noopener">' + esc(STYLES[k].ref.replace("https://", "").replace(/\/(#.*)?$/, "")) + "</a>" + (STYLES[k].ref2 ? '<span>and ' + esc(STYLES[k].ref2Name) + '</span><a href="' + esc(STYLES[k].ref2) + '" target="_blank" rel="noopener">' + esc(STYLES[k].ref2.replace("https://", "").replace(/\/$/, "")) + "</a>" : "") + "</div>" +
+      "</figcaption></figure>").join("");
+  }
+  function syncGallery(code) {
+    document.querySelectorAll(".preset").forEach((f) => {
+      const on = f.dataset.style === code;
+      f.classList.toggle("is-selected", on);
+      const b = f.querySelector("button[data-use]");
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.textContent = on ? "Selected" : "Use style " + f.dataset.style;
+    });
+  }
+
+  /* HUD layout thumbnails */
+  function layoutThumb(kind) {
+    let s = '<svg viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + R(0, 0, 160, 90, "#061427") +
+      '<circle cx="' + (kind === "hero" ? 80 : 112) + '" cy="' + (kind === "hero" ? 34 : 44) + '" r="18" fill="' + K.blue + '" opacity=".18"/>' +
+      '<circle cx="' + (kind === "hero" ? 80 : 112) + '" cy="' + (kind === "hero" ? 34 : 44) + '" r="8" fill="' + K.ice + '" opacity=".5"/>';
+    if (kind === "stack") s += R(10, 22, 24, 3, K.blue, 1) + R(10, 30, 56, 6, K.ink, 2) + R(10, 39, 44, 6, "#4fd2f0", 2) + R(10, 52, 50, 7, K.glass, 2, K.line) + R(10, 62, 50, 7, "#0b2c48", 2, K.blue) + R(10, 72, 50, 7, K.glass, 2, K.line);
+    if (kind === "hero") s += R(40, 58, 80, 6, K.ink, 2) + R(52, 67, 56, 6, "#4fd2f0", 2) + R(60, 78, 40, 3, K.muted, 1);
+    if (kind === "focus") s += R(10, 18, 62, 58, K.glass, 5, K.line) + R(16, 24, 10, 10, K.amber, 2) + R(30, 26, 34, 5, K.amber, 2) + R(16, 40, 50, 9, "#030a15", 2) + R(16, 54, 46, 3, K.muted, 1) + R(16, 60, 40, 3, K.muted, 1);
+    if (kind === "workshop") s += R(10, 12, 50, 5, K.ink, 2) + R(10, 22, 62, 58, K.glass, 5, K.line) + [0, 1, 2, 3].map((i) => R(16, 28 + i * 11, 50, 7, "#030a15", 2, [K.blue, K.green, K.amber, K.pink][i])).join("");
+    return s + "</svg>";
+  }
+  $("layouts").innerHTML = [
+    ["stack", "Default. HUD left, beats marked done, now and later, world shifted right."],
+    ["hero", "Centered at the bottom with a wide headline. The opening and the close."],
+    ["focus", "One large card per step: block number, colored heading, prompt fragment."],
+    ["workshop", "Short HUD on top, a glass form below it, the world lights as fields fill."]
+  ].map((l) => '<div class="layout">' + layoutThumb(l[0]) + "<b>" + l[0] + "</b><span>" + l[1] + "</span></div>").join("");
+
+  let shownStyle = null;
+  function renderStyleDetail(code) {
+    syncGallery(code);
+    if (shownStyle === code) return;
+    shownStyle = code;
+    const st = STYLES[code];
+    const narr = "Narration and speaker notes: always included.";
+    $("style-detail").innerHTML = "<p><strong>Style " + code + " · " + esc(st.name) + ".</strong> " + esc(st.shape) + "</p>" +
+      "<p><strong>With the skill.</strong> " + esc(st.skillShort) + "</p>" +
+      "<p>" + esc(narr) + ' <a href="' + esc(st.ref) + '" target="_blank" rel="noopener">' + (code === "A" ? "Open the source talk" : "Open the reference build") + '</a> · <a href="#presets">Compare in step 01</a></p>';
+  }
+
+  function update() {
+    const s = readState();
+    const moonMode = s.style === "A";
+    $("f-hours").disabled = !s.timebox;
+    $("examples-field").hidden = !s.masterpiece;
+    document.body.dataset.mode = moonMode ? "moon" : "structured";
+    $("f-mpersonas").hidden = s.pmode !== "specific";
+    const internal = s.purpose === "internal";
+    $("f-audience").placeholder = internal ? "Optional: the customer stakeholders this prepares the team for" : "Role, seniority, and the decision they own";
+    $("f-discuss").placeholder = internal ? "The tool or solution to explain, in this customer's context" : moonMode ? "The direction, in a sentence or two: the solution, use case or business problem to build around" : "The one Cisco solution or use case, and the business problem it solves";
+    if (optsStyle === s.style) optsBy[s.style] = [...document.querySelectorAll("#opts input:checked")].map((i) => i.dataset.opt);
+    else {
+      const sel = optsBy[s.style] || STYLES[s.style].defaultOpts || [];
+      $("opts").innerHTML = OPTIONS.map((o) => '<label class="switch"><input type="checkbox" data-opt="' + o.id + '"' + (sel.includes(o.id) ? " checked" : "") + "><span>" + esc(o.label) + "<small>" + esc(o.text) + "</small></span></label>").join("");
+      optsStyle = s.style;
+    }
+    s.opts = optsBy[s.style] || STYLES[s.style].defaultOpts || [];
+    s.optsBy = optsBy;
+    const text = buildPrompt(s);
+    renderPrompt(text);
+    readiness(s);
+    renderStyleDetail(s.style);
+    const words = text.split(/\s+/).filter(Boolean).length;
+    const tbds = (text.match(/\bTBD\b/g) || []).length;
+    $("meter").innerHTML = "<span>Style " + s.style + "</span><span>" + words.toLocaleString() + " words</span><span>" + tbds + " TBD</span><span>Skill " + (s.skill ? "on" : "off") + "</span>" + "<span>" + (s.oneshot && s.straight && s.timebox && s.masterpiece ? "One-shot build" : "Guided mode") + "</span>" + (s.timebox ? "<span>" + hoursText(s.hours) + " budget</span>" : "");
+    save(STORE_KEY, s);
+    return text;
+  }
+
+  form.addEventListener("input", update);
+  function onChange(e) {
+    update();
+  }
+  form.addEventListener("change", onChange);
+  $("preset-picker").addEventListener("change", onChange);
+  form.addEventListener("submit", (e) => e.preventDefault());
+
+  let statusTimer;
+  function flash(msg) { $("status").textContent = msg; clearTimeout(statusTimer); statusTimer = setTimeout(() => { $("status").textContent = ""; }, 4500); }
+
+  function copyText(text, onOk, selectEl) {
+    const fallback = () => {
+      if (selectEl) { const sel = window.getSelection(); const r = document.createRange(); r.selectNodeContents(selectEl); sel.removeAllRanges(); sel.addRange(r); }
+      onOk(false);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => onOk(true), fallback);
+      else fallback();
+    } catch (e) { fallback(); }
+  }
+  $("copy").addEventListener("click", () => {
+    const text = update();
+    copyText(text, (ok) => flash(ok ? "Copied. Paste it into your AI tool. It builds straight through, or in guided mode checks the skill and asks you to approve a storyboard first." : "Prompt selected. Press Ctrl+C or Cmd+C to copy."), $("prompt"));
+  });
+
+  $("clear").addEventListener("click", () => { $("confirm").hidden = false; $("confirm-yes").focus(); });
+  $("confirm-no").addEventListener("click", () => { $("confirm").hidden = true; });
+  $("confirm-yes").addEventListener("click", () => {
+    const s = readState();
+    textFields.forEach((n) => { s[n] = ""; });
+    writeState(s); $("confirm").hidden = true; update(); flash("Brief cleared.");
+  });
+
+  /* code block copy buttons */
+  document.querySelectorAll(".code").forEach((box) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = "Copy";
+    b.addEventListener("click", () => {
+      const pre = box.querySelector("pre");
+      copyText(pre.textContent, (ok) => { b.textContent = ok ? "Copied" : "Selected"; setTimeout(() => { b.textContent = "Copy"; }, 1800); }, pre);
+    });
+    box.appendChild(b);
+  });
+
+  /* install tabs */
+  const tabs = ["code", "app", "cursor"];
+  function showTab(k) {
+    tabs.forEach((t) => {
+      $("tab-" + t).setAttribute("aria-selected", t === k ? "true" : "false");
+      $("pane-" + t).hidden = t !== k;
+    });
+    try { localStorage.setItem("csg-tab", k); } catch (e) {}
+  }
+  tabs.forEach((t) => $("tab-" + t).addEventListener("click", () => showTab(t)));
+  try { const t = localStorage.getItem("csg-tab"); if (tabs.includes(t)) showTab(t); } catch (e) {}
+
+  /* checklist */
+  let checked = load(CHECK_KEY) || [];
+  function renderChecklist() {
+    $("checklist").innerHTML = CHECKLIST.map((t, i) =>
+      '<li><label for="c-' + i + '"><input type="checkbox" id="c-' + i + '" data-i="' + i + '"' + (checked[i] ? " checked" : "") + "><span>" + esc(t) + "</span></label></li>").join("");
+    const n = checked.filter(Boolean).length;
+    $("progress").textContent = n + " of " + CHECKLIST.length + (n === CHECKLIST.length ? " · ready to present" : "");
+  }
+  $("checklist").addEventListener("change", (e) => {
+    const i = +e.target.dataset.i; checked[i] = e.target.checked; save(CHECK_KEY, checked); renderChecklist();
+    const el = $("c-" + i); if (el) el.focus();
+  });
+  $("reset-check").addEventListener("click", () => { checked = []; save(CHECK_KEY, checked); renderChecklist(); });
+
+  /* ---------- voice: per-field dictation ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let srBlocked = !SR;
+  let rec = null, recBtn = null;
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  const osHint = () => isMac
+    ? "Use your Mac's dictation: press <kbd>Fn</kbd> twice (or the <kbd>🎤</kbd> key). The cursor is in the field, so just start talking."
+    : "Use your computer's dictation: press <kbd>Win</kbd> + <kbd>H</kbd> on Windows, or your device's microphone key. The cursor is in the field, so just start talking.";
+  const MIC_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>';
+
+  function stopDictation() {
+    if (rec) { try { rec.onend = null; rec.stop(); } catch (e) {} }
+    rec = null;
+    if (recBtn) { recBtn.classList.remove("on"); recBtn.setAttribute("aria-pressed", "false"); if (recBtn.dataset.label) recBtn.lastChild.textContent = recBtn.dataset.label; }
+    recBtn = null;
+  }
+  /* Starts browser speech recognition into el. Returns false when the browser or the page's frame blocks it. */
+  function startDictation(el, btn, onCommand, onBlocked) {
+    stopDictation();
+    el.focus();
+    if (srBlocked) { onBlocked(); return false; }
+    let r;
+    try { r = new SR(); } catch (e) { srBlocked = true; onBlocked(); return false; }
+    r.continuous = true; r.interimResults = true; r.lang = navigator.language || "en-US";
+    let base = el.value ? el.value.replace(/\s+$/, "") + " " : "";
+    r.onresult = (ev) => {
+      let fin = "", interim = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const t = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) fin += t; else interim += t;
+      }
+      if (fin) {
+        const cmd = fin.trim().toLowerCase().replace(/[.!?,]/g, "");
+        if (onCommand && /^(next|next question|skip|skip this|go back|back)$/.test(cmd)) { onCommand(cmd); return; }
+        base += fin.trim() + " ";
+      }
+      el.value = (base + interim).replace(/^\s+/, "");
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    r.onerror = (ev) => {
+      if (["not-allowed", "service-not-allowed", "audio-capture", "network"].includes(ev.error)) { srBlocked = true; stopDictation(); el.focus(); onBlocked(); }
+    };
+    r.onend = () => { if (rec === r) stopDictation(); };
+    try { r.start(); } catch (e) { srBlocked = true; onBlocked(); return false; }
+    rec = r; recBtn = btn;
+    if (btn) { btn.classList.add("on"); btn.setAttribute("aria-pressed", "true"); if (btn.dataset.label) btn.lastChild.textContent = "Listening… tap to stop"; }
+    return true;
+  }
+
+  document.querySelectorAll("#brief .field").forEach((field) => {
+    const el = field.querySelector(':scope > input[type="text"], :scope > textarea');
+    const label = field.querySelector(":scope > label");
+    if (!el || !label) return;
+    const row = document.createElement("div");
+    row.className = "frow";
+    label.replaceWith(row);
+    row.appendChild(label);
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "mic"; b.dataset.label = "Speak";
+    b.setAttribute("aria-label", "Dictate into " + label.textContent.replace(/\s+/g, " ").trim());
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = MIC_SVG + "<span>Speak</span>";
+    row.appendChild(b);
+    const hint = document.createElement("div");
+    hint.className = "dict-hint"; hint.hidden = true; hint.setAttribute("role", "status");
+    field.appendChild(hint);
+    b.addEventListener("click", () => {
+      if (recBtn === b) { stopDictation(); return; }
+      startDictation(el, b, null, () => { hint.innerHTML = osHint(); hint.hidden = false; clearTimeout(hint._t); hint._t = setTimeout(() => { hint.hidden = true; }, 12000); });
+    });
+  });
+
+  /* ---------- voice: step-by-step questionnaire ---------- */
+  const talk = $("talk");
+  let tIndex = 0;
+  function tQuestions() {
+    const st = readState();
+    const internal = st.purpose === "internal";
+    const q = [
+      { k: "account", q: "Who is the customer?", h: "The organization, and what they do, in a sentence." },
+      { k: "purpose", q: "Who is this for?", h: "Customer-facing, or an internal explainer for the account team.", choices: [["customer", "The customer"], ["internal", "Our account team"]] },
+      { k: "audience", q: internal ? "Which customer stakeholders does this prepare the team for?" : "Who will be in the room?", h: internal ? "Optional. Roles are enough." : "Their roles, and the decision they own." },
+      { k: "discuss", q: internal ? "Which tool or solution should it explain?" : "What do you want the focus to be?", h: "A sentence or two is plenty." }
+    ];
+    q.push({ k: "hours", q: "How long may the model work on the build?", h: "A ceiling, not a target. It can finish early if the work clears the bar.", choices: [["0.5", "30 minutes"], ["1", "1 hour"], ["2", "2 hours"], ["4", "4 hours"], ["8", "8 hours"]] });
+    q.push({ k: "length", q: "How long should the finished experience run?", h: "The full narrated run, start to finish.", choices: [["5", "5 min"], ["10", "10 min"], ["15", "15 min"], ["20", "20 min"], ["30", "30 min"], ["model", "Model decides"]] });
+    q.push({ k: "oneshot", q: "Should the model build straight through, with no questions and no plan to approve?", h: "Recommended. Choose guided if you want it to ask you questions or show you a plan first.", choices: [["yes", "Yes, build straight through"], ["no", "Guide me through it"]] });
+    if (st.masterpiece) q.push({ k: "examples", q: "Do you have examples of what a masterpiece looks like?", h: "Optional. Links or short descriptions. Say skip to let the model decide." });
+    if (st.style === "A") {
+      q.push({ k: "context", q: "Is there anything the model can't find publicly?", h: "Your work together, internal priorities, what you heard in meetings. Say skip if there's nothing." });
+      q.push({ k: "pmode", q: "Personas: a wide range, or specific ones?", h: "Wide lets the model choose for this audience.", choices: [["wide", "A wide range"], ["specific", "Specific personas"]] });
+      if (st.pmode === "specific") q.push({ k: "mpersonas", q: "Which personas should it cover?", h: "Name each role. One at a time is fine." });
+    } else {
+      [["where", "Anything you already know about where they are today?"], ["items", "Is there anything that must appear?"], ["personas", "Which people or roles should it feature?"], ["places", "Which sites or regions should anchor the story?"], ["scenarios", "Which situations should it cover?"], ["assumptions", "Anything it should assume?"], ["output", "How will you share it?"]]
+        .forEach(([k, t]) => q.push({ k, q: t, h: "Optional. Say skip to move on." }));
+    }
+    return q;
+  }
+  const getVal = (k) => k === "purpose" ? readState().purpose : k === "pmode" ? readState().pmode : k === "hours" ? $("f-hours").value : k === "length" ? $("f-length").value : k === "oneshot" ? ($("o-oneshot").checked && $("o-straight").checked ? "yes" : "no") : form.elements[k].value;
+  function setVal(k, v) {
+    if (k === "purpose") $(v === "internal" ? "pu-internal" : "pu-customer").checked = true;
+    else if (k === "pmode") $(v === "specific" ? "pm-specific" : "pm-wide").checked = true;
+    else if (k === "hours") $("f-hours").value = v;
+    else if (k === "length") $("f-length").value = v;
+    else if (k === "oneshot") { $("o-oneshot").checked = v === "yes"; $("o-straight").checked = v === "yes"; }
+    else form.elements[k].value = v;
+    update();
+  }
+  function tStatus(t, html) { const el = $("talk-status"); if (html) el.innerHTML = t; else el.textContent = t; }
+  function tRender() {
+    stopDictation();
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    const qs = tQuestions();
+    tIndex = Math.max(0, Math.min(tIndex, qs.length - 1));
+    const q = qs[tIndex];
+    $("talk-count").textContent = "Question " + (tIndex + 1) + " of " + qs.length;
+    $("talk-prog").style.width = Math.round((tIndex / qs.length) * 100) + "%";
+    $("talk-q").textContent = q.q;
+    $("talk-h").textContent = q.h;
+    $("talk-next").textContent = tIndex === qs.length - 1 ? "Finish" : "Next";
+    $("talk-back").disabled = tIndex === 0;
+    $("talk-mic").hidden = !!q.choices;
+    tStatus("");
+    const body = $("talk-body");
+    if (q.choices) {
+      const cur = getVal(q.k);
+      body.innerHTML = '<div class="choices">' + q.choices.map(([v, l]) => '<button type="button" data-v="' + v + '" aria-pressed="' + (cur === v) + '">' + esc(l) + "</button>").join("") + "</div>";
+      body.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { setVal(q.k, b.dataset.v); tNext(); }));
+      body.querySelector('button[aria-pressed="true"], button').focus();
+    } else {
+      body.innerHTML = '<textarea id="talk-ans" aria-labelledby="talk-q"></textarea>';
+      const ta = $("talk-ans");
+      ta.value = getVal(q.k) || "";
+      ta.addEventListener("input", () => { form.elements[q.k].value = ta.value; update(); });
+      ta.focus();
+    }
+    const listen = () => { if (!q.choices && $("talk-auto").checked) tListen(); };
+    if ($("talk-read").checked && window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance(q.q);
+      u.onend = listen; u.onerror = listen;
+      window.speechSynthesis.speak(u);
+    } else listen();
+  }
+  function tListen() {
+    const ta = $("talk-ans");
+    if (!ta) return;
+    const ok = startDictation(ta, $("talk-mic"), (cmd) => { stopDictation(); if (cmd.startsWith("next")) tNext(); else if (cmd.startsWith("skip")) tNext(true); else tBack(); },
+      () => tStatus(osHint(), true));
+    if (ok) tStatus("Listening. Answer, then say next.");
+  }
+  function tNext(skip) {
+    const qs = tQuestions();
+    if (skip && !qs[tIndex].choices) { const ta = $("talk-ans"); if (ta && !ta.value.trim()) { form.elements[qs[tIndex].k].value = ""; update(); } }
+    if (tIndex >= qs.length - 1) { tClose(); $("prompt-panel").scrollIntoView({ behavior: "smooth", block: "start" }); flash("Intake filled from your answers. Review the prompt, then copy it."); return; }
+    tIndex++; tRender();
+  }
+  function tBack() { if (tIndex > 0) { tIndex--; tRender(); } }
+  function tClose() { stopDictation(); if (window.speechSynthesis) window.speechSynthesis.cancel(); talk.hidden = true; $("talk-open").focus(); }
+  $("talk-open").addEventListener("click", () => { tIndex = 0; talk.hidden = false; tRender(); });
+  $("talk-close").addEventListener("click", tClose);
+  $("talk-next").addEventListener("click", () => tNext());
+  $("talk-skip").addEventListener("click", () => tNext(true));
+  $("talk-back").addEventListener("click", tBack);
+  $("talk-mic").addEventListener("click", () => { if (recBtn === $("talk-mic")) { stopDictation(); tStatus("Paused."); } else tListen(); });
+  talk.addEventListener("keydown", (e) => { if (e.key === "Escape") tClose(); });
+  ["talk-read", "talk-auto"].forEach((id) => {
+    try { const v = localStorage.getItem("csg-" + id); if (v !== null) $(id).checked = v === "1"; } catch (e) {}
+    $(id).addEventListener("change", () => { try { localStorage.setItem("csg-" + id, $(id).checked ? "1" : "0"); } catch (e) {} });
+  });
+
+  renderGallery();
+  $("gallery").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-use]");
+    if (!b) return;
+    const r = document.querySelector('input[name="style"][value="' + b.dataset.use + '"]');
+    r.checked = true;
+    r.dispatchEvent(new Event("change", { bubbles: true }));
+    flash("Style " + b.dataset.use + " selected. The prompt now uses its style block.");
+    $("brief-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  const GAL_KEY = "csg-gallery-open";
+  function setGallery(open) {
+    $("gal-body").hidden = !open;
+    $("gal-toggle").setAttribute("aria-expanded", open ? "true" : "false");
+    $("gal-toggle").textContent = open ? "Hide previews" : "Show previews";
+  }
+  const galPref = load(GAL_KEY);
+  setGallery(galPref === null ? !load(STORE_KEY) : galPref);
+  $("gal-toggle").addEventListener("click", () => {
+    const open = $("gal-body").hidden;
+    setGallery(open); save(GAL_KEY, open);
+  });
+
+  writeState(load(STORE_KEY));
+  renderChecklist();
+  update();
+})();
+</script>
+
+</body>
+</html>
