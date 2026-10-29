@@ -371,6 +371,20 @@ footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; max-wi
             <label for="f-discuss"><span class="structured-only">What to discuss</span><span class="moon-only">What you want the focus to be</span> <span class="key">FOCUS</span></label>
             <textarea id="f-discuss" name="discuss" placeholder="The one Cisco solution or use case, and the business problem it solves"></textarea>
           </div>
+          <div class="field">
+            <label for="f-products">Cisco products to feature <span class="key">MUST INCLUDE</span></label>
+            <input type="text" id="f-products" name="products" placeholder="e.g. ThousandEyes, Cyber Vision, ISE, Catalyst Center, Cisco Cloud Control">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="f-exclude">Leave out <span class="key">OPTIONAL</span></label>
+              <input type="text" id="f-exclude" name="exclude" placeholder="Anything not to mention">
+            </div>
+            <div class="field">
+              <label for="f-integrate">Their tools to integrate with <span class="key">OPTIONAL</span></label>
+              <input type="text" id="f-integrate" name="integrate" placeholder="e.g. Microsoft Sentinel, ServiceNow, Epic">
+            </div>
+          </div>
 
           <div class="row2">
             <div class="field">
@@ -416,7 +430,7 @@ footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; max-wi
           <div class="group-title structured-only"><h3>Evidence and cast</h3><span class="part">one per line</span></div>
 
           <div class="field structured-only">
-            <label for="f-items">Key items <span class="key">OPTIONAL</span></label>
+            <label for="f-items">Other must-haves <span class="key">OPTIONAL</span></label>
             <textarea id="f-items" name="items" placeholder="Anything that must appear: a fact, product, or program, with a link if you have one"></textarea>
           </div>
           <div class="field structured-only">
@@ -816,7 +830,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
       ref: "https://brisk-valley-7hw3.here.now/", refName: "The one-shot workshop prompt from A spoken word away, the framework behind B to E",
       shape: "An open brief. You give the customer, the focus and the audience; the model researches, chooses the format, and builds the strongest experience it can within a time budget, then grades and improves its own work.",
       skillShort: "The engine and design system as a foundation; the format is the model's call.",
-      skillNote: "Use it for the Cisco design system and the 3D engine. It is a foundation, not a format: the format is yours to choose.",
+      skillNote: "It sets the look and the 3D engine, not the format.",
       narration: "optional",
       style: []
     },
@@ -932,7 +946,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
   const CHECK_KEY = "csg-check-v1";
   const $ = (id) => document.getElementById(id);
   const form = $("brief");
-  const textFields = ["account", "audience", "where", "discuss", "items", "personas", "places", "scenarios", "assumptions", "output", "context", "mpersonas", "examples"];
+  const textFields = ["account", "audience", "where", "discuss", "items", "personas", "places", "scenarios", "assumptions", "output", "context", "mpersonas", "examples", "products", "exclude", "integrate"];
 
   function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
   function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
@@ -979,113 +993,104 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
   const val = (v) => v || TBD;
   const list = (v) => { const l = lines(v); return l.length ? l.map((x) => "  - " + x).join("\n") : "  " + TBD; };
 
-  function researchSection(acct, focus) {
-    return "§RESEARCH\n" +
-      "Before you design, research " + acct + ": the business, its strategy and current initiatives, and anything recent that matters to " + (focus ? "the focus" : "this audience") + ", such as earnings calls, filings, announcements, leadership changes, incidents or outages, and regulatory developments. Prioritize the last 12 months and note dates. Then research the Cisco solutions that fit, through that lens. Cite your sources. Where something is not public, make a reasonable assumption and say so in your reply.";
-  }
-  function purposeSection(s) {
-    const acct = val(s.account);
-    if (s.purpose === "internal") {
-      return "§WHO IT IS FOR\n" +
-        "This is an internal explainer for the Cisco account team, not for the customer. Explain " + (s.discuss || "the focus") + " in the context of " + acct + ": what it is, how it works, why it matters to this account, and how to position it" + (s.audience ? " with " + s.audience : "") + ". Background, sources, talk tracks and discovery questions belong here.\n" +
-        "Narrate it so it can be watched on its own, and include speaker notes for anyone presenting it. Disclose the narrator as AI.";
-    }
-    return "§WHO IT IS FOR\n" +
-      "This is customer-facing. It will be shown to " + val(s.audience) + " at " + acct + ". Speak to them about their priorities and the outcomes they care about. Use the research to shape the story, not to fill the screen: show only the facts that move the story forward, keep sources in a sources panel and the speaker notes, and leave out background they already know about their own organization. Do not address the account team, sales strategy, or discovery questions.\n" +
-      "It must work two ways: narrated from start to finish, so it can be sent as a link or a video when we cannot meet, and presented live, with speaker notes for every scene. Disclose the narrator as AI.";
-  }
-  const forPurpose = (arr, s) => arr.filter((x) => !/^\[(customer|internal)\]/.test(x) || x.startsWith("[" + (s.purpose === "internal" ? "internal" : "customer") + "]")).map((x) => x.replace(/^\[(customer|internal)\]/, ""));
   const hoursText = (h) => h === "0.5" ? "30 minutes" : h === "1" ? "1 hour" : h + " hours";
   const isGuided = (s) => !(s.oneshot && s.straight && s.timebox && s.masterpiece);
   const SKILL_FIND = "look for cisco-3d-stage/SKILL.md in your skills folder, such as ~/.claude/skills or the project's .claude/skills";
-  function workSection(s) {
+  const SKILL_LOOK = "midnight navy backgrounds, Cisco blue #00bceb and green #6cc04a, glass panels, Inter type, and lit 3D scenes with crisp labels";
+  const forPurpose = (arr, s) => arr.filter((x) => !/^\[(customer|internal)\]/.test(x) || x.startsWith("[" + (s.purpose === "internal" ? "internal" : "customer") + "]")).map((x) => x.replace(/^\[(customer|internal)\]/, ""));
+  const listOrBlank = (v) => lines(v.replace(/,\s*/g, "\n")).join(", ");
+
+  function opening(s) {
+    const acct = val(s.account), internal = s.purpose === "internal";
     const L = [];
+    L.push("Build an interactive Three.js 3D experience, bundled into one self-contained web app I can present and share as a link" + (s.style === "A" ? "." : ", in the format described under STYLE."));
+    L.push("The customer is " + acct + ". Show their real places and the people in them.");
+    L.push(internal
+      ? "It explains " + val(s.discuss) + " to our account team, in this customer's context."
+      : "I want to discuss " + val(s.discuss) + ". The audience is " + val(s.audience) + ".");
+    if (s.style !== "C") L.push("Organize it so they can navigate by persona or by technology, and tell every scenario with Cisco and without.");
+    const prod = listOrBlank(s.products || ""), ex = listOrBlank(s.exclude || ""), integ = listOrBlank(s.integrate || "");
+    if (prod) L.push("It must include: " + prod + ".");
+    if (ex) L.push("Do not mention " + ex + ".");
+    if (integ) L.push("Call out integration points with " + integ + " wherever they genuinely exist.");
+    if (s.style === "A") L.push("Beyond that, the format, story and visual approach are yours to choose.");
+    return L.join(" ");
+  }
+  function workSection(s) {
     if (!isGuided(s)) {
-      L.push("This is a one-shot prompt. Do not ask me any questions, and do not stop to show me a plan, outline or storyboard for approval: plan internally, then build. Where something is unclear, make a reasonable assumption, note it, and keep going.");
-      L.push("Make it real, then make it perfect: get a complete, working version running end to end first, then use the rest of your time to improve it.");
-      L.push("You have up to " + hoursText(s.hours) + " of working time. It is a ceiling, not a target: take the time to research deeply, design carefully and iterate, and do not rush to a first draft. Finish early only when the work clears the bar. Note the time when you start and check it as you go; as the limit nears, finish and polish what you have instead of starting something new.");
-      return "§HOW TO WORK\n" + L.join("\n");
+      return "§HOW TO WORK\n" +
+        "Do not ask me any questions. This is a one-shot task: do not stop to show me a plan or storyboard for approval. Make reasonable assumptions and document them in an Assumptions panel.\n" +
+        "Make it real, then make it perfect: a complete, working version first, then improve it.\n" +
+        "You have up to " + hoursText(s.hours) + " of work. It is a ceiling, not a target: do not rush, and as the limit nears, finish and polish instead of starting something new.";
     }
-    L.push("Work with me through these steps, in order, and wait for my OK wherever a step says so:");
     const steps = [];
-    if (s.skill) steps.push("Confirm the cisco-3d-stage skill is installed: " + SKILL_FIND + ". If you cannot find it, stop, ask me to install it, and wait until I confirm. The visuals depend on it.");
-    steps.push(s.oneshot ? "Do not ask me questions; make reasonable assumptions and note them." : "If anything critical is missing, ask me up to three short questions, and wait for my answers.");
-    steps.push("Research, then show me a storyboard and the narration script: one panel per scene with what is on screen, the on-screen words, the narration line, and the duration. Wait for my OK, and change it as I ask.");
-    steps.push("Build to the approved storyboard and script. Make it real first, end to end, then make it better.");
-    steps.push("When it is built, list every estimate and every assumption so I can check them before I present.");
-    L.push(steps.map((x, i) => (i + 1) + ". " + x).join("\n"));
-    if (s.timebox) L.push("You have up to " + hoursText(s.hours) + " of working time, not counting the time you wait for me. It is a ceiling, not a target: go deep, and do not rush.");
-    return "§HOW TO WORK\n" + L.join("\n");
+    if (s.skill) steps.push("Confirm the cisco-3d-stage skill is installed: " + SKILL_FIND + ". If you cannot find it, ask me to install it and wait.");
+    steps.push(s.oneshot ? "Do not ask me questions; make reasonable assumptions and document them." : "If anything critical is missing, ask me up to three short questions and wait for my answers.");
+    steps.push("Do the research and the build brief, then show me a storyboard and the narration script: one panel per scene with what is on screen, the on-screen words, the narration line, and the duration. Wait for my OK.");
+    steps.push("Build to the approved storyboard and script. Make it real first, then make it better.");
+    return "§HOW TO WORK\nWork with me through these steps, in order:\n" + steps.map((x, i) => (i + 1) + ". " + x).join("\n") +
+      (s.timebox ? "\nYou have up to " + hoursText(s.hours) + " of work, not counting time spent waiting for me. It is a ceiling, not a target." : "");
+  }
+  function purposeSection(s) {
+    const len = s.length === "model" ? "Choose the length that suits the audience." : "The full narrated run should last about " + s.length + " minutes.";
+    if (s.purpose === "internal") {
+      return "§WHO IT IS FOR\nOur Cisco account team, not the customer. Explain how it works, why it matters to this account, and how to position it" + (s.audience ? " with " + s.audience : "") + ", with talk tracks and discovery questions. Narrate it and include speaker notes; disclose the narrator as AI. " + len;
+    }
+    return "§WHO IT IS FOR\nCustomer-facing, for " + val(s.audience) + ". Speak to their priorities and outcomes. Narrate it end to end so it can be sent as a link or a video, and include speaker notes for presenting it live; disclose the narrator as AI. " + len;
+  }
+  function researchSection(s) {
+    return "§RESEARCH\n" +
+      "Research is mandatory: research the customer's business, initiatives, recent news, public challenges and outages, and locations, then research the Cisco solutions through that lens. Prioritize the last 12 months.\n" +
+      "Before you build, turn the research into a build brief: their real places, the real roles of the people in them, and scenarios grounded in documented events, with the accurate facts each product contributes.\n" +
+      "Cite sources in the app and label modeled data.";
+  }
+  function buildSection(s, note) {
+    const L = [];
+    if (s.skill) {
+      L.push("Use the cisco-3d-stage skill for every visual (read SKILL.md and its references first). " + note);
+      if (!isGuided(s)) L.push("If it is not installed, do not stop: keep its look (" + SKILL_LOOK + "), and tell me at the end that it was missing.");
+    } else L.push("Make the visuals presentation-grade: " + SKILL_LOOK + ".");
+    if (s.orch) L.push("If you can run sub-agents, orchestrate: research, build and review in parallel, with a separate reviewer checking the running build.");
+    return "§BUILD\n" + L.join("\n");
+  }
+  function finishSection(s) {
+    return "§WHEN IT IS BUILT\nPublish it to a shareable URL and confirm it loads. Test it in a browser at desktop and phone width and fix what you find. Then give me the link, the sources and the assumptions" +
+      (s.skill && !isGuided(s) ? ", and say whether the cisco-3d-stage skill was installed." : ".");
   }
   function masterpieceSection(s) {
     const ex = lines(s.examples);
-    return "§CREATE A MASTERPIECE\nCreate a masterpiece." +
-      (ex.length ? "\nHere is what a masterpiece looks like to me. Treat these as a bar to clear, not a template to copy:\n" + ex.map((x) => "- " + x).join("\n") : "");
+    return "Create a masterpiece." + (ex.length ? "\nHere is what a masterpiece looks like to me. Treat these as a bar to clear, not a template to copy:\n" + ex.map((x) => "- " + x).join("\n") : "");
   }
-  function timeSection(s) {
-    return "§LENGTH\n" +
-      (s.length === "model"
-        ? "Choose the length of the finished experience to suit this audience, and tell me what you chose."
-        : "The full narrated run should last about " + s.length + " minutes from start to finish. Viewers can explore beyond that on their own.");
-  }
-  function orchSection() {
-    return "§HOW TO RUN THIS\nIf your environment can run sub-agents, act as the orchestrator: give research, design, build and review to separate agents working in parallel, and have a separate reviewer agent judge the running build. If it cannot, work through the same phases yourself, in order.";
-  }
-  function skillSection(note, s) {
-    return "§SKILL\nUse the cisco-3d-stage skill for every visual: the 3D scenes, palette, type, glass panels and motion come from it, not from a generic template or a plain page. Read SKILL.md and its references first. " + note + "\n" +
-      (isGuided(s)
-        ? "If you could not confirm the skill in step 1, do not build without it."
-        : "Check that it is installed: " + SKILL_FIND + ". If it is not, do not stop to ask: build as close to its design system as you can, and tell me at the end that it was missing so I can install it.");
-  }
-
-  const handback = (s) => "When you are done, give me the link" + "" + " and the assumptions you made" + (s.skill && !isGuided(s) ? ", and say whether the cisco-3d-stage skill was installed." : ".");
 
   function buildMoon(s) {
-    const out = [];
-    out.push("Build an interactive, self contained web experience that I can present and share as a link. " +
-      "The customer is " + val(s.account) + ". I want the focus to be " + val(s.discuss) + ". " + (s.purpose === "internal" ? "It is for our account team." : "The audience is " + val(s.audience) + "."));
-    out.push(workSection(s));
-    out.push("The format, story, structure and visual style are yours to choose. Use the most advanced graphics and presentation techniques you can deliver well.");
-    out.push(purposeSection(s));
-    out.push(timeSection(s));
-    out.push(researchSection(val(s.account), s.discuss));
+    const out = [opening(s), workSection(s), purposeSection(s), researchSection(s)];
     const ctx = lines(s.context);
     if (ctx.length) out.push("§CONTEXT FROM ME (not public)\n" + ctx.map((x) => "- " + x).join("\n"));
-    out.push("§PERSONAS\n" + (s.pmode === "specific" && lines(s.mpersonas).length
-      ? "Cover these personas, and create use cases for each:\n" + lines(s.mpersonas).map((x) => "- " + x).join("\n")
-      : "Choose the personas that matter to this audience, as many as the story needs, and create use cases for each."));
-    if (s.orch) out.push(orchSection());
-    if (s.skill) out.push(skillSection(STYLES.A.skillNote, s));
+    if (s.pmode === "specific" && lines(s.mpersonas).length) out.push("§PERSONAS\nCover these personas, with use cases for each:\n" + lines(s.mpersonas).map((x) => "- " + x).join("\n"));
+    out.push(buildSection(s, STYLES.A.skillNote));
+    out.push(finishSection(s));
     if (s.masterpiece) out.push(masterpieceSection(s));
-    out.push(handback(s));
     return out.join("\n\n");
   }
 
   function buildPrompt(s) {
     if (s.style === "A") return buildMoon(s);
     const st = STYLES[s.style];
-    const out = [];
-    out.push("Build an interactive, self contained web experience that I can present and share as a link, in the style described below. " +
-      "The customer is " + val(s.account) + ". " + (s.purpose === "internal" ? "It is for our account team." : "The audience is " + val(s.audience) + ".") + " The focus is " + val(s.discuss) + ".");
-    out.push(workSection(s));
-    out.push(purposeSection(s));
-    out.push(timeSection(s));
-    out.push(researchSection(val(s.account), s.discuss));
+    const out = [opening(s), workSection(s), purposeSection(s), researchSection(s)];
     const known = [];
     const add = (label, v) => { const l = lines(v); if (l.length) known.push(label + ":\n" + l.map((x) => "- " + x).join("\n")); };
     add("Where they are", s.where);
-    add("Must include", s.items);
+    add("Other must-haves", s.items);
     add("Personas", s.personas);
     add("Places", s.places);
     add("Scenarios", s.scenarios);
     add("Assumptions", s.assumptions);
     add("Output", s.output);
-    if (known.length) out.push("§WHAT I ALREADY KNOW\nUse this alongside your research.\n\n" + known.join("\n\n"));
-    out.push("§STYLE: " + st.name.toUpperCase() + "\nBuild exactly this format. Everything inside it (the story, scenes, scenarios, personas and figures) comes from your research and what I gave you.\n" + forPurpose(st.style, s).concat(OPTIONS.filter((o) => (s.opts || []).includes(o.id)).map((o) => o.text)).map((x) => "- " + x).join("\n"));
-    if (s.orch) out.push(orchSection());
-    if (s.skill) out.push(skillSection(st.skillNote + " Where the skill's defaults differ from the style above, follow the style.", s));
+    if (known.length) out.push("§WHAT I ALREADY KNOW\n" + known.join("\n\n"));
+    out.push("§STYLE: " + st.name.toUpperCase() + "\nBuild exactly this format; everything inside it comes from your research and what I gave you.\n" + forPurpose(st.style, s).concat(OPTIONS.filter((o) => (s.opts || []).includes(o.id)).map((o) => o.text)).map((x) => "- " + x).join("\n"));
+    out.push(buildSection(s, st.skillNote + " Where the skill's defaults differ from the style, follow the style."));
+    out.push(finishSection(s));
     if (s.masterpiece) out.push(masterpieceSection(s));
-    out.push(handback(s));
     return out.join("\n\n");
   }
 
@@ -1102,6 +1107,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     if (s.purpose !== "internal") req.push(["audience", "Audience"]);
     const miss = req.filter(([k]) => !s[k]).map(([, l]) => l);
     checks.push(miss.length ? { flag: true, t: "Still empty: " + miss.join(", ") + "." } : { flag: false, t: "The basics are set." });
+    checks.push(s.products ? { flag: false, t: "Featuring: " + s.products + "." } : { flag: true, t: "No Cisco products named. The model will choose; naming them gives a sharper story." });
     checks.push({ flag: false, t: s.purpose === "internal" ? "Internal explainer for the account team: background, sources and talk tracks included." : "Customer-facing: narrated end to end for sending, with speaker notes for presenting live." });
     if (s.style === "A") {
       if (s.pmode === "specific" && !lines(s.mpersonas).length) checks.push({ flag: true, t: "Specific personas is selected but none are listed." });
@@ -1837,7 +1843,10 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
       { k: "account", q: "Who is the customer?", h: "The organization, and what they do, in a sentence." },
       { k: "purpose", q: "Who is this for?", h: "Customer-facing, or an internal explainer for the account team.", choices: [["customer", "The customer"], ["internal", "Our account team"]] },
       { k: "audience", q: internal ? "Which customer stakeholders does this prepare the team for?" : "Who will be in the room?", h: internal ? "Optional. Roles are enough." : "Their roles, and the decision they own." },
-      { k: "discuss", q: internal ? "Which tool or solution should it explain?" : "What do you want the focus to be?", h: "A sentence or two is plenty." }
+      { k: "discuss", q: internal ? "Which tool or solution should it explain?" : "What do you want the focus to be?", h: "A sentence or two is plenty." },
+      { k: "products", q: "Which Cisco products should it feature?", h: "Name them. Say skip to let the model choose." },
+      { k: "exclude", q: "Is there anything it should leave out?", h: "Optional. Say skip if not." },
+      { k: "integrate", q: "Which of their tools should it show integrations with?", h: "Optional, for example their SIEM or ITSM. Say skip if not." }
     ];
     q.push({ k: "hours", q: "How long may the model work on the build?", h: "A ceiling, not a target. It can finish early if the work clears the bar.", choices: [["0.5", "30 minutes"], ["1", "1 hour"], ["2", "2 hours"], ["4", "4 hours"], ["8", "8 hours"]] });
     q.push({ k: "length", q: "How long should the finished experience run?", h: "The full narrated run, start to finish.", choices: [["5", "5 min"], ["10", "10 min"], ["15", "15 min"], ["20", "20 min"], ["30", "30 min"], ["model", "Model decides"]] });

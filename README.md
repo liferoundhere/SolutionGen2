@@ -50,13 +50,16 @@ Six format cards sit at the top of the page. Pick one and go straight to the int
 
 ### 02 · Fill the intake
 
-Three fields are all you need:
+Three fields are required, and naming the Cisco products is strongly recommended:
 
 | Field | What to enter |
 | --- | --- |
 | Who the customer is | The organization and what it does, in a sentence. |
 | Who will be in the room | Roles, seniority and the decision they own. |
 | What you want the focus to be | The solution, use case or business problem to build around. |
+| Cisco products to feature | The products the story must include. Naming them gives a much sharper story. |
+| Leave out (optional) | Anything the build should not mention. |
+| Their tools to integrate with (optional) | The customer's own tools, such as their SIEM or ITSM, so the build calls out real integration points. |
 
 Then set:
 
@@ -131,21 +134,19 @@ Four principles are on by default for every style. Together they make the AI too
 
 ## What goes into the prompt
 
-Every prompt is short and generic, so the model's own research shapes the story. The sections, in order:
+The prompt follows the brief that produced the CSX wayside build: short, and almost entirely about the customer and the story. The Moonshot prompt for a typical brief is about 450 words.
 
 | Section | Contents |
 | --- | --- |
-| Opening line | The customer, the audience and the focus. |
-| How to work | The core principles, or the guided process. |
-| Who it is for | Customer-facing or internal explainer, with narration and speaker notes. |
-| Length | The narrated runtime. |
-| Research | The customer's business, strategy, current initiatives and anything recent: earnings calls, filings, announcements, leadership changes, incidents and regulatory news, prioritizing the last 12 months. Then the Cisco solutions that fit. |
+| Opening | "Build an interactive Three.js 3D experience, bundled into one self-contained web app I can present and share as a link." The customer, with "Show their real places and the people in them." The focus and the audience. "Organize it so they can navigate by persona or by technology, and tell every scenario with Cisco and without." The products it must include, what not to mention, and the integration points to call out. |
+| How to work | The core principles in three lines, or the guided process. |
+| Who it is for | Customer-facing or internal, narrated end to end with speaker notes, and the runtime. |
+| Research | Mandatory: the customer's business, initiatives, recent news, public challenges and outages, and locations, then the Cisco solutions through that lens. The model turns the research into a build brief (real places, real roles, scenarios grounded in documented events) before it builds. Sources are cited in the app and modeled data is labeled. |
 | What I already know | Only the optional fields you filled (styles B to F). |
-| Style | The format to build exactly, plus any optional components you ticked (styles B to F). Moonshot leaves the format to the model. |
-| How to run this | Orchestrate sub-agents for research, design, build and review, with a separate reviewer. |
-| Skill | Use `cisco-3d-stage` for every visual. In one-shot mode, check it is installed and report if it was missing; in guided mode, stop and ask. |
-| Create a masterpiece | The mandate, plus your examples if any. |
-| Hand-back | The link, the assumptions made, and whether the skill was installed. |
+| Style | The format to build exactly, plus any optional components you ticked (styles B to F). |
+| Build | Use the `cisco-3d-stage` skill for every visual, with its look spelled out in case it is missing, and orchestrate sub-agents if the tool can. |
+| When it is built | Publish to a shareable URL and confirm it loads, test at desktop and phone width and fix what turns up, then hand back the link, sources and assumptions. |
+| Create a masterpiece | The closing line, plus your examples if any. |
 
 ## Talking instead of typing
 
