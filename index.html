@@ -371,6 +371,11 @@ footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; max-wi
             <label for="f-discuss"><span class="structured-only">What to discuss</span><span class="moon-only">What you want the focus to be</span> <span class="key">FOCUS</span></label>
             <textarea id="f-discuss" name="discuss" placeholder="The one Cisco solution or use case, and the business problem it solves"></textarea>
           </div>
+          <div class="field">
+            <label for="f-serves">Who they serve <span class="key">OPTIONAL</span></label>
+            <textarea id="f-serves" name="serves" placeholder="The people the customer serves and the staff who serve them, for example patients and families, nurses, biomed. Leave empty and the model researches it."></textarea>
+            <p class="hint">Every prompt asks the model to research who the customer serves and build an experience map for each group. Anything you add here is a starting point, not a limit.</p>
+          </div>
 
           <div class="row2">
             <div class="field">
@@ -900,6 +905,15 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     defaultOpts: ["tour", "journeys", "lenses", "scenarios", "disrupt", "drill", "layers", "time", "dash", "ai", "stack", "inspector", "people", "sources"]
   };
 
+  /* Where the experience map sits in each style. The section itself is the same for every style. */
+  const MAP_PLACE = {
+    A: "Put the experience map where the audience meets it first, in whatever form you choose.",
+    B: "Put the experience map in the first panel, beside the personas, and tie each scenario to a moment on it.",
+    C: "Make the experience map an early scene, and return to one of its moments in each later chapter.",
+    D: "Put the experience map in the first section after the twin and the headline figures.",
+    E: "Tie each mission to a moment on the experience map, and show the map in the opening tour.",
+    F: "The experience map leads the left panel and the welcome screen: all groups side by side, each moment one click from playing on the twin."
+  };
   const OPTIONS = [
     { id: "tour", label: "Guided tour", text: "A narrated guided tour of a few minutes on landing that explains what the viewer is looking at and how to use it, with ways to jump to stories or explore on their own." },
     { id: "journeys", label: "Narrated journeys", text: "Narrated journeys that follow one person (a customer, patient, traveler or employee) through their day, each playable With Cisco, Without Cisco, or side by side to compare, plus a walk-it-yourself mode." },
@@ -924,6 +938,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     "No customer internal data appears anywhere, and no dashboard is presented as real customer data.",
     "The without-Cisco and traditional timelines are fair: they describe the current way of working, not a caricature of it.",
     "Every agent action ends at a human approval gate.",
+    "Every group the customer serves has a person, sourced moments and a lens, and the experience map leads the experience.",
     "The build matches the preset you chose and the brief you gave.",
     "Links, narration, and share controls were tested from a clean browser session."
   ];
@@ -932,7 +947,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
   const CHECK_KEY = "csg-check-v1";
   const $ = (id) => document.getElementById(id);
   const form = $("brief");
-  const textFields = ["account", "audience", "where", "discuss", "items", "personas", "places", "scenarios", "assumptions", "output", "context", "mpersonas", "examples"];
+  const textFields = ["account", "audience", "where", "discuss", "serves", "items", "personas", "places", "scenarios", "assumptions", "output", "context", "mpersonas", "examples"];
 
   function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
   function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
@@ -953,12 +968,15 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     s.orch = $("o-orch").checked;
     s.pmode = $("pm-specific").checked ? "specific" : "wide";
     s.optsBy = optsBy;
+    s.evFor = evFor;
     s.ver = 2;
     return s;
   }
-  let optsBy = {}, optsStyle = null;
+  let optsBy = {}, optsStyle = null, evFor = "";
+  const EVIDENCE = ["where", "items", "personas", "places", "scenarios", "assumptions", "context", "mpersonas", "serves"];
   function writeState(s) {
     optsBy = (s && s.optsBy && typeof s.optsBy === "object") ? s.optsBy : {};
+    evFor = (s && typeof s.evFor === "string") ? s.evFor : "";
     optsStyle = null;
     if (s) textFields.forEach((n) => { if (/Northline|EXAMPLE ONLY|wayside|trackside/i.test(s[n] || "")) s[n] = ""; });
     if (s && !s.ver && /^[A-D]$/.test(s.style)) s.style = { A: "B", B: "C", C: "D", D: "E" }[s.style];
@@ -982,6 +1000,17 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
   function researchSection(acct, focus) {
     return "§RESEARCH\n" +
       "Before you design, research " + acct + ": the business, its strategy and current initiatives, and anything recent that matters to " + (focus ? "the focus" : "this audience") + ", such as earnings calls, filings, announcements, leadership changes, incidents or outages, and regulatory developments. Prioritize the last 12 months and note dates. Then research the Cisco solutions that fit, through that lens. Cite your sources. Where something is not public, make a reasonable assumption and say so in your reply.";
+  }
+  function experienceSection(s) {
+    const given = lines(s.serves || "");
+    return "§WHO THEY SERVE AND THE EXPERIENCE MAP\n" +
+      "Before you design, research and identify everyone whose day this solution changes, then expand on each group.\n" +
+      "1. Identify the groups. Start from four: the people the customer serves (for example patients and families, passengers, students or shoppers), the frontline staff who serve them, leadership, and the IT, network and OT teams who keep it running. Split or add groups where the research shows they matter (for example visitors, contractors or a specific patient population). For each group, research who they are at this customer: the numbers and populations in public reports, the places they move through, and what the customer has said publicly about their experience (strategy, experience and workforce programs, survey scores, recognitions, complaints and incidents)." +
+      (given.length ? " Start from these, and add any others the research shows:\n" + given.map((x) => "   - " + x).join("\n") : "") + "\n" +
+      "2. Research their pain. For each group, find published evidence of what goes wrong today: industry benchmarks, national surveys, peer-reviewed studies, regulator and safety bodies, hazard lists and breach reports. Date and cite every one. Prefer evidence about this customer, then their region, then their industry.\n" +
+      "3. Build the experience map. Give each group a named fictional person with a role, a place and a day, and three or more moments across that day. For each moment write: Today (the sourced pain point, with its source); With Cisco (what the products in focus do, checked against current Cisco documentation, naming any partner the solution depends on); Scope (what Cisco does not do in this moment); Outcome (a before and after figure, labeled modeled); and Show me (the " + (s.style === "C" ? "scene" : s.style === "E" ? "mission" : "journey, scenario, layer or view") + " in the experience that plays this moment).\n" +
+      "4. Make it the way in. " + MAP_PLACE[s.style] + " Give each group its own lens or point of view, and include one narrated beat that walks the map.\n" +
+      "Write the groups, people, moments and sources into your research notes before you build. In your reply, list anything about these groups that you assumed rather than found.";
   }
   function purposeSection(s) {
     const acct = val(s.account);
@@ -1010,7 +1039,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     const steps = [];
     if (s.skill) steps.push("Confirm the cisco-3d-stage skill is installed: " + SKILL_FIND + ". If you cannot find it, stop, ask me to install it, and wait until I confirm. The visuals depend on it.");
     steps.push(s.oneshot ? "Do not ask me questions; make reasonable assumptions and note them." : "If anything critical is missing, ask me up to three short questions, and wait for my answers.");
-    steps.push("Research, then show me a storyboard and the narration script: one panel per scene with what is on screen, the on-screen words, the narration line, and the duration. Wait for my OK, and change it as I ask.");
+    steps.push("Research, then show me the experience map (each group, its person, its moments and their sources), a storyboard and the narration script: one panel per scene with what is on screen, the on-screen words, the narration line, and the duration. Wait for my OK, and change it as I ask.");
     steps.push("Build to the approved storyboard and script. Make it real first, end to end, then make it better.");
     steps.push("When it is built, list every estimate and every assumption so I can check them before I present.");
     L.push(steps.map((x, i) => (i + 1) + ". " + x).join("\n"));
@@ -1049,6 +1078,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     out.push(purposeSection(s));
     out.push(timeSection(s));
     out.push(researchSection(val(s.account), s.discuss));
+    out.push(experienceSection(s));
     const ctx = lines(s.context);
     if (ctx.length) out.push("§CONTEXT FROM ME (not public)\n" + ctx.map((x) => "- " + x).join("\n"));
     out.push("§PERSONAS\n" + (s.pmode === "specific" && lines(s.mpersonas).length
@@ -1071,6 +1101,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     out.push(purposeSection(s));
     out.push(timeSection(s));
     out.push(researchSection(val(s.account), s.discuss));
+    out.push(experienceSection(s));
     const known = [];
     const add = (label, v) => { const l = lines(v); if (l.length) known.push(label + ":\n" + l.map((x) => "- " + x).join("\n")); };
     add("Where they are", s.where);
@@ -1080,7 +1111,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     add("Scenarios", s.scenarios);
     add("Assumptions", s.assumptions);
     add("Output", s.output);
-    if (known.length) out.push("§WHAT I ALREADY KNOW\nUse this alongside your research.\n\n" + known.join("\n\n"));
+    if (known.length) out.push("§WHAT I ALREADY KNOW\nUse this alongside your research. If anything here belongs to another industry or account, translate it into " + val(s.account) + "'s world or drop it, and say which you did.\n\n" + known.join("\n\n"));
     out.push("§STYLE: " + st.name.toUpperCase() + "\nBuild exactly this format. Everything inside it (the story, scenes, scenarios, personas and figures) comes from your research and what I gave you.\n" + forPurpose(st.style, s).concat(OPTIONS.filter((o) => (s.opts || []).includes(o.id)).map((o) => o.text)).map((x) => "- " + x).join("\n"));
     if (s.orch) out.push(orchSection());
     if (s.skill) out.push(skillSection(st.skillNote + " Where the skill's defaults differ from the style above, follow the style.", s));
@@ -1109,6 +1140,9 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
       const extra = ["where", "items", "personas", "places", "scenarios", "assumptions", "output"].filter((k) => s[k]).length;
       checks.push({ flag: false, t: extra ? extra + " optional field" + (extra > 1 ? "s" : "") + " filled; only filled fields go into the prompt." : "Only the basics are filled; the model researches the rest." });
     }
+    const filledEv = EVIDENCE.filter((k) => s[k]);
+    if (filledEv.length && s.evFor && s.account && s.evFor.toLowerCase() !== s.account.toLowerCase())
+      checks.push({ flag: true, t: "Some optional fields were written for " + s.evFor + ", not " + s.account + ". Check them, or use Clear brief, before you copy." });
     const offP = [["oneshot", "one-shot"], ["straight", "build straight through"], ["timebox", "time budget"], ["masterpiece", "masterpiece"]].filter(([k]) => !s[k]).map(([, l]) => l);
     checks.push(offP.length ? { flag: true, t: "Guided mode (" + offP.join(", ") + " off): the model checks the skill is installed, " + (s.oneshot ? "" : "may ask you questions, ") + "and waits for you to approve a storyboard and narration script before it builds." } : { flag: false, t: "Core principles on: one-shot, straight-through build, time budget, masterpiece." });
     checks.push({ flag: false, t: (s.timebox ? "Up to " + hoursText(s.hours) + " to build; " : "No build time limit; ") + (s.length === "model" ? "length left to the model." : "about " + s.length + " minutes to run.") });
@@ -1684,7 +1718,10 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
     return text;
   }
 
-  form.addEventListener("input", update);
+  form.addEventListener("input", (e) => {
+    if (e.target && EVIDENCE.includes(e.target.name)) evFor = form.elements.account.value.trim();
+    update();
+  });
   function onChange(e) {
     update();
   }
@@ -1715,6 +1752,7 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
   $("confirm-yes").addEventListener("click", () => {
     const s = readState();
     textFields.forEach((n) => { s[n] = ""; });
+    s.evFor = "";
     writeState(s); $("confirm").hidden = true; update(); flash("Brief cleared.");
   });
 
@@ -1837,7 +1875,8 @@ node tools/gen_docs.mjs ../narrated/audio/manifest.json</pre></div>
       { k: "account", q: "Who is the customer?", h: "The organization, and what they do, in a sentence." },
       { k: "purpose", q: "Who is this for?", h: "Customer-facing, or an internal explainer for the account team.", choices: [["customer", "The customer"], ["internal", "Our account team"]] },
       { k: "audience", q: internal ? "Which customer stakeholders does this prepare the team for?" : "Who will be in the room?", h: internal ? "Optional. Roles are enough." : "Their roles, and the decision they own." },
-      { k: "discuss", q: internal ? "Which tool or solution should it explain?" : "What do you want the focus to be?", h: "A sentence or two is plenty." }
+      { k: "discuss", q: internal ? "Which tool or solution should it explain?" : "What do you want the focus to be?", h: "A sentence or two is plenty." },
+      { k: "serves", q: "Who does the customer serve, and who serves them?", h: "Optional. The model researches every group either way. Say skip to move on." }
     ];
     q.push({ k: "hours", q: "How long may the model work on the build?", h: "A ceiling, not a target. It can finish early if the work clears the bar.", choices: [["0.5", "30 minutes"], ["1", "1 hour"], ["2", "2 hours"], ["4", "4 hours"], ["8", "8 hours"]] });
     q.push({ k: "length", q: "How long should the finished experience run?", h: "The full narrated run, start to finish.", choices: [["5", "5 min"], ["10", "10 min"], ["15", "15 min"], ["20", "20 min"], ["30", "30 min"], ["model", "Model decides"]] });
