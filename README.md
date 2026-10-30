@@ -64,8 +64,11 @@ Then set:
 - **Build time budget** (30 minutes to 8 hours): how long the model may work. It is a ceiling, not a target.
 - **Experience length** (about 5 to 45 minutes, or let the model decide): how long the full narrated run lasts.
 - **Core principles**: see [Core principles and guided mode](#core-principles-and-guided-mode).
+- **Who they serve** (optional, every style): the people the customer serves and the staff who serve them, for example patients and families, nurses, biomed. The model researches every group either way; anything you add is a starting point, not a limit.
 
 Moonshot adds two optional fields: context only you can give (anything not publicly documented) and personas (a wide range chosen for the audience, or specific roles you list). Styles B to F show optional fields for things you already know: where the customer is today, must-include items, personas, places, scenarios, assumptions and output.
+
+The page saves your brief in this browser and reloads it next time. When you start a brief for a different customer, use **Clear brief** first. If optional fields were written for another account, the readiness checks flag it before you copy, and the prompt tells the model to translate anything from another industry into this customer's world or drop it.
 
 ![The intake in Moonshot mode with an example brief](docs/screenshots/03-intake-moonshot.png)
 
@@ -123,7 +126,7 @@ Four principles are on by default for every style. Together they make the AI too
 
 1. Confirm the `cisco-3d-stage` skill is installed. If it cannot be found, stop and ask the user to install it.
 2. Ask up to three short questions (only if one-shot is off).
-3. Research, then show a storyboard and the narration script, and wait for approval.
+3. Research, then show the experience map, a storyboard and the narration script, and wait for approval.
 4. Build to the approved storyboard and script.
 5. List every estimate and assumption for review before presenting.
 
@@ -140,7 +143,8 @@ Every prompt is short and generic, so the model's own research shapes the story.
 | Who it is for | Customer-facing or internal explainer, with narration and speaker notes. |
 | Length | The narrated runtime. |
 | Research | The customer's business, strategy, current initiatives and anything recent: earnings calls, filings, announcements, leadership changes, incidents and regulatory news, prioritizing the last 12 months. Then the Cisco solutions that fit. |
-| What I already know | Only the optional fields you filled (styles B to F). |
+| Who they serve and the experience map | Every style. Research and identify every group whose day the solution changes (the people the customer serves, frontline staff, leadership, IT and OT, plus any the research adds), find dated, cited evidence of their pain, and build an experience map: a named person per group with three or more moments, each with Today, With Cisco (checked against Cisco documentation), Scope, a modeled Outcome and a Show me link. One line sets where the map sits for each style; in style F it leads the left panel and the welcome screen. |
+| What I already know | Only the optional fields you filled (styles B to F), with an instruction to translate anything from another industry or account. |
 | Style | The format to build exactly, plus any optional components you ticked (styles B to F). Moonshot leaves the format to the model. |
 | How to run this | Orchestrate sub-agents for research, design, build and review, with a separate reviewer. |
 | Skill | Use `cisco-3d-stage` for every visual. In one-shot mode, check it is installed and report if it was missing; in guided mode, stop and ask. |
